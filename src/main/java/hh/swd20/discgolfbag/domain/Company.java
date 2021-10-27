@@ -62,6 +62,4 @@ public class Company {
 		return "Company [id=" + id + ", name=" + name + "]";
 	}
 	
-	
-
 }
