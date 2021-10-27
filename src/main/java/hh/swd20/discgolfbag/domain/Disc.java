@@ -20,6 +20,7 @@ public class Disc {
 	private int turn;
 	private int fade;
 	private String plastic;
+	private Boolean inBag;
 	
 	@ManyToOne
 	@JsonIgnoreProperties("discs")
@@ -41,6 +42,7 @@ public class Disc {
 		this.plastic = null;
 		this.category = null;
 		this.company = null;
+		this.inBag = false;
 	}
 
 	public Disc(String name, int speed, int glide, int turn, int fade, String plastic, Category category,
@@ -110,6 +112,14 @@ public class Disc {
 
 	public void setPlastic(String plastic) {
 		this.plastic = plastic;
+	}
+
+	public Boolean getInBag() {
+		return inBag;
+	}
+
+	public void setInBag(Boolean inBag) {
+		this.inBag = inBag;
 	}
 
 	public Category getCategory() {
