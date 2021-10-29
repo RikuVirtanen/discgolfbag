@@ -1,0 +1,52 @@
+<div th:fragment="navbar">
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+		<div class="col-sm-4 col-xs-6 no-padding">
+			<a class="navbar-brand">LOGO</a>
+		</div>
+		<div class="navbar-collapse" id="navbarNavDropdown">
+			<ul class="navbar-nav">
+				<li class="nav-item">
+					<a class="nav-link" href="/">Main <span class="sr-only">(current)</span></a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="/storage">Storage <span class="sr-only">(current)</span></a>
+				</li>
+				<li class="nav-item" sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
+					<a class="nav-link" href="/mybag">[[${#httpServletRequest.remoteUser}]]'s bag</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="/users">Users</a>
+				</li>
+			</ul>
+		</div>
+		<div class="theme-toggler">
+			<label class="switch">
+				<input type="checkbox">
+				<span class="slider round"></span>
+			</label>
+		</div>
+		<form class="form-inline" action="#" th:action="@{/discs}" method="GET">
+			<input class="form-control mr-sm-2" type="search" placeholder="Search users" aria-label="Search" name="name" id="search" />
+			<button class="btn btn-outline-succes my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
+		</form>
+		<div sec:authorize="isAnonymous">
+			<a class="btn btn-light" href="/login">Login</a>
+		</div>
+		<div class="dropdown" sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
+			<button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
+				<i class="fas fa-user"></i>
+				[[${#httpServletRequest.remoteUser}]]
+			</button>
+			<div class="dropdown-menu dropdown-menu-right">
+				<a class="dropdown-item" href="#">Profile</a>
+				<a class="dropdown-item" href="#">Settings</a>
+				<a class="dropdown-item" href="#">Customize</a>
+				<div class="dropdown-divider"></div>
+				<form class="form-inline" th:action="@{/logout}" method="post">
+					<input type="submit" value="Sign Out" class="btn btn-sm"/>
+				</form>	
+			</div>
+		</div>
+		
+	</nav>
+</div>

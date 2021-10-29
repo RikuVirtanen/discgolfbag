@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<link type="text/css" rel="stylesheet" href="css/styles.css" th:href="@{css/styles.css}" /> 
+<script src="https://kit.fontawesome.com/17a4ce7e95.js" crossorigin="anonymous"></script>
+<script type="text/javascript" th:src="@{/js/script.js}" defer></script>
+<title>Insert title here</title>
+</head>
+<body>
+	<header>
+		<div class="nav" th:replace="fragments/topnav :: navbar"></div>
+	</header>
+	
+	<div class="d-flex justify-content-between container">
+		<div class="flex-item">
+			<div class="side-container"></div>
+		</div>
+		<div class="flex-item login-container">
+			<div class="content">
+				<div>
+					<h2>Signup</h2>
+				</div>
+				<form th:object="${signupform}" th:action="@{/saveuser}" action="#" method="post">
+					<div>
+						<label> Username :<input type="text" th:field="*{username}" class="form-control" placeholder="Username" required /></label>
+						<p th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username Error</p>	
+					</div>
+					<div>
+						<label> Email :<input type="email" th:field="*{email}" class="form-control" placeholder="E-mail" required /></label>
+						<p th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username Error</p>	
+					</div>
+					<div>
+						<label> Password :<input type="password" th:field="*{password}" class="form-control" placeholder="Password" required /></label>
+						<p th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</p>	
+					</div>
+					<div>
+						<label> Re-type Password: <input type="password" th:field="*{passwordCheck}" class="form-control" placeholder="Re-type password" required /></label>
+						<p th:if="${#fields.hasErrors('passwordCheck')}" th:errors="*{passwordCheck}">Password Match Error</p>	
+					</div>
+					
+					<input type="submit" class="btn btn-primary" value="Signup"></input>		
+				</form>
+			</div>
+		</div>
+		<div class="flex-item">
+			<div class="side-container"></div>
+		</div>
+	</div>
+</body>
+</html>

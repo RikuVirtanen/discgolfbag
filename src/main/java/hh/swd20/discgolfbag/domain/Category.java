@@ -9,8 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 @Entity
 public class Category {
 	
@@ -20,12 +18,16 @@ public class Category {
 	private String name;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "category" )
-	@JsonIgnoreProperties("category")
 	private List<Disc> discs;
 	
 	public Category() {
 		super();
 		this.name = null;
+	}
+	
+	public Category(String name) {
+		super();
+		this.name = name;
 	}
 
 	public Category(String name, List<Disc> discs) {
@@ -57,10 +59,21 @@ public class Category {
 	public void setDiscs(List<Disc> discs) {
 		this.discs = discs;
 	}
+	
+	public String capitalize(String word) {
+		String words[] = word.split("\\s");
+		String outcome = "";
+		for (String w: words) {
+			String first = w.substring(0, 1);
+			String rest = w.substring(1);
+			outcome += first.toUpperCase() + rest + " ";
+		}
+		
+		return outcome.trim();
+	}
 
 	@Override
 	public String toString() {
-		return "Category [id=" + id + ", name=" + name + "]";
+		return "Category [id=" + id + ", name=" + capitalize(this.name) + "]";
 	}
-	
 }

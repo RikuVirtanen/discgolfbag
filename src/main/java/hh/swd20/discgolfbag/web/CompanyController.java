@@ -58,10 +58,10 @@ public class CompanyController {
 	
 	@RequestMapping(value="/savecompany", method=RequestMethod.POST)
 	public String saveCompany(@ModelAttribute Company company) {
-		if(!repository.findByName(capitalize(company.getName())).isEmpty()) {
+		if(!repository.findByName(company.capitalize(company.getName())).isEmpty()) {
 			return "redirect:/companylist";
 		}
-		company.setName(capitalize(company.getName()));
+		company.setName(company.capitalize(company.getName()));
 		repository.save(company);
 		return "redirect:/companylist";
 	}
@@ -77,17 +77,5 @@ public class CompanyController {
 		
 		repository.deleteById(companyId);
 		return "redirect:../companylist";
-	}
-	
-	public String capitalize(String word) {
-		String words[] = word.split("\\s");
-		String outcome = "";
-		for (String w: words) {
-			String first = w.substring(0, 1);
-			String rest = w.substring(1);
-			outcome += first.toUpperCase() + rest.toLowerCase() + " ";
-		}
-		
-		return outcome.trim();
 	}
 }

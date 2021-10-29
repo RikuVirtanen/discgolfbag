@@ -24,12 +24,12 @@ public class Disc {
 	
 	@ManyToOne
 	@JsonIgnoreProperties("discs")
-	@JoinColumn(name = "id")
+	@JoinColumn(name = "categoryId")
 	private Category category;
 	
 	@ManyToOne
 	@JsonIgnoreProperties("discs")
-	@JoinColumn(name = "id")
+	@JoinColumn(name = "companyId")
 	private Company company;
 
 	public Disc() {
@@ -56,6 +56,7 @@ public class Disc {
 		this.plastic = plastic;
 		this.category = category;
 		this.company = company;
+		this.inBag = false;
 	}
 
 	public Long getId() {
@@ -137,11 +138,23 @@ public class Disc {
 	public void setCompany(Company company) {
 		this.company = company;
 	}
+	
+	public String capitalize(String word) {
+		String words[] = word.split("\\s");
+		String outcome = "";
+		for (String w: words) {
+			String first = w.substring(0, 1);
+			String rest = w.substring(1);
+			outcome += first.toUpperCase() + rest + " ";
+		}
+		
+		return outcome.trim();
+	}
 
 	@Override
 	public String toString() {
 		return "Disc [id=" + id + ", name=" + name + ", speed=" + speed + ", glide=" + glide + ", turn=" + turn
-				+ ", fade=" + fade + ", plastic=" + plastic + ", category=" + this.getCategory().getName() + ", company=" + this.company.getName() + "]";
+				+ ", fade=" + fade + ", plastic=" + plastic + ", category=" + capitalize(this.getCategory().getName()) + ", company=" + capitalize(this.company.getName()) + "]";
 	}
 	
 	

@@ -33,15 +33,16 @@ public class DiscController {
 	@Autowired 
 	private CompanyRepository comRepository;
 	
-	@RequestMapping(value = "/login")
-	public String login() {
-		return "login";
-	}
-	
 	@RequestMapping(value = "/storage", method = RequestMethod.GET)
 	public String listDiscs(Model model) {
 		model.addAttribute("discs", dRepository.findAll());
 		return "storage";
+	}
+	
+	@RequestMapping(value = "/mybag", method = RequestMethod.GET)
+	public String listMyDiscs(Model model) {
+		model.addAttribute("discs", dRepository.findByInBag(true));
+		return "bag";
 	}
 	
 	/******************RESTFUL SERVICES **************************/
@@ -56,6 +57,11 @@ public class DiscController {
 		return dRepository.findById(discId);
 	}
 	
+	@RequestMapping(value = "/discs/{name}", method = RequestMethod.GET)
+	public @ResponseBody Optional<Disc> findDiscRest(@PathVariable("name") String discName) {
+		return dRepository.findByName(discName);
+	}
+	
 	@PreAuthorize(value = "hasAuthority('ADMIN')")
 	@RequestMapping(value = "/discs", method = RequestMethod.POST)
 	public @ResponseBody Disc saveDiscRest(@RequestBody Disc disc) {
@@ -67,12 +73,12 @@ public class DiscController {
 	@PreAuthorize(value = "hasAuthority('ADMIN')")
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public String saveDisc(@ModelAttribute Disc disc) {
-		disc.setName(capitalize(disc.getName()));
+		disc.setName(disc.capitalize(disc.getName()));
 		disc.setSpeed(disc.getSpeed());
 		disc.setGlide(disc.getGlide());
 		disc.setTurn(disc.getTurn());
 		disc.setFade(disc.getFade());
-		disc.setPlastic(capitalize(disc.getPlastic()));
+		disc.setPlastic(disc.capitalize(disc.getPlastic()));
 		disc.setInBag(disc.getInBag());
 		disc.setCategory(disc.getCategory());
 		disc.setCompany(disc.getCompany());
@@ -81,12 +87,30 @@ public class DiscController {
 	}
 	
 	@PreAuthorize(value = "hasAuthority('ADMIN')")
-	@RequestMapping(value = "/add", method = RequestMethod.GET)
-	public String addDisc(Model model) {
+	@RequestMapping(value = "/discadd", method = RequestMethod.GET)
+	public String addNewDisc(Model model) {
 		model.addAttribute("disc", new Disc());
 		model.addAttribute("categories", catRepository.findAll());
 		model.addAttribute("companies", comRepository.findAll());
-		return "addanotherdisc";
+		return "discadd";
+	}
+	
+	@PreAuthorize(value = "hasAuthority('USER')")
+	@RequestMapping(value = "/add/{id}", method = RequestMethod.GET)
+	public String addDisc(@PathVariable("id") Long discId) {
+		Disc disc = dRepository.findById(discId).get();
+		disc.setInBag(true);
+		dRepository.save(disc);
+		return "redirect:/storage";
+	}
+	
+	@PreAuthorize(value = "hasAuthority('USER')")
+	@RequestMapping(value = "/remove/{id}", method = RequestMethod.GET)
+	public String removeDisc(@PathVariable("id") Long discId) {
+		Disc disc = dRepository.findById(discId).get();
+		disc.setInBag(false);
+		dRepository.save(disc);
+		return "redirect:/mybag";
 	}
 	
 	@PreAuthorize(value = "hasAuthority('ADMIN')")
@@ -102,18 +126,7 @@ public class DiscController {
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
 	public String deleteDisc(@PathVariable("id") Long discId) {
 		dRepository.deleteById(discId);
-		return "redirect::/storage";
+		return "redirect:/storage";
 	}
 	
-	public String capitalize(String word) {
-		String words[] = word.split("\\s");
-		String outcome = "";
-		for (String w: words) {
-			String first = w.substring(0, 1);
-			String rest = w.substring(1);
-			outcome += first.toUpperCase() + rest.toLowerCase() + " ";
-		}
-		
-		return outcome.trim();
-	}
 }
