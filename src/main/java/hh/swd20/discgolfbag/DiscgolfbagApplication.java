@@ -1,5 +1,8 @@
 package hh.swd20.discgolfbag;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -11,6 +14,8 @@ import hh.swd20.discgolfbag.domain.Category;
 import hh.swd20.discgolfbag.domain.CategoryRepository;
 import hh.swd20.discgolfbag.domain.Company;
 import hh.swd20.discgolfbag.domain.CompanyRepository;
+import hh.swd20.discgolfbag.domain.DGBag;
+import hh.swd20.discgolfbag.domain.DGBagRepository;
 import hh.swd20.discgolfbag.domain.Disc;
 import hh.swd20.discgolfbag.domain.DiscRepository;
 import hh.swd20.discgolfbag.domain.User;
@@ -25,7 +30,7 @@ public class DiscgolfbagApplication {
 	}
 	
 	@Bean
-	public CommandLineRunner discgolfbagApp(DiscRepository dr, CategoryRepository catr, CompanyRepository comr, UserRepository ur) {
+	public CommandLineRunner discgolfbagApp(DiscRepository dr, CategoryRepository catr, CompanyRepository comr, UserRepository ur, DGBagRepository DGBr) {
 		return (args) -> {
 			log.info("insert example data to database");
 			
@@ -66,6 +71,20 @@ public class DiscgolfbagApplication {
 			log.info("fetch all users");
 			for(User user: ur.findAll()) {
 				log.info(user.toString());
+			}
+			
+			List<Disc> discs = new ArrayList<Disc>();
+			discs.add(dr.findByName("Tern").get());
+			discs.add(dr.findByName("River").get());
+			discs.add(dr.findByName("Method").get());
+			discs.add(dr.findByName("Faith").get());
+			
+			DGBr.save(new DGBag("user's bag", "Blue", ur.findByUsername("user"), discs));
+			DGBr.save(new DGBag("admin's bag", "Red", ur.findByUsername("admin"), discs));
+			
+			log.info("fetch all DGBags");
+			for(DGBag bag: DGBr.findAll()) {
+				log.info(bag.toString());
 			}
 		};
 	}

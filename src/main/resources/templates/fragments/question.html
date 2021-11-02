@@ -1,0 +1,11 @@
+<div id="quest"></div>
+<button type="button" onclick="add()">Lis‰‰</button>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+	function add() {
+		var new_id_no = parseInt($('#old_id_no').val()) + 1;
+		var new_id = "question" + new_id_no;
+		$('#quest').append("<div><label>Kysymys:</label><input class='form-control' type='text' id=" + new_id + " /></div>");
+	}
+</script>

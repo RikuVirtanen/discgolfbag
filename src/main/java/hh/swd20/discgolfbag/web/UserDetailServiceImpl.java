@@ -11,18 +11,18 @@ import hh.swd20.discgolfbag.domain.User;
 import hh.swd20.discgolfbag.domain.UserRepository;
 
 @Service
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class UserDetailServiceImpl implements UserDetailsService {
 	
 	private final UserRepository repository;
 	
 	@Autowired
-	public UserDetailsServiceImpl(UserRepository userRepository) {
+	public UserDetailServiceImpl(UserRepository userRepository) {
 		this.repository = userRepository; 
 	}
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User curruser = repository.findByUsername(username).get();
+		User curruser = repository.findByUsername(username);
 		UserDetails user = new org.springframework.security.core.userdetails.User(
 				username, 
 				curruser.getPasswordHash(), 

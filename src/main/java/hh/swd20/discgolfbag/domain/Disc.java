@@ -31,6 +31,11 @@ public class Disc {
 	@JsonIgnoreProperties("discs")
 	@JoinColumn(name = "companyId")
 	private Company company;
+	
+	@ManyToOne
+	@JsonIgnoreProperties("discs")
+	@JoinColumn(name = "bagId")
+	private DGBag bag; 
 
 	public Disc() {
 		super();

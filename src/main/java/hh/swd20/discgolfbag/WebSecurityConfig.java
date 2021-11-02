@@ -9,7 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import hh.swd20.discgolfbag.web.UserDetailsServiceImpl;
+import hh.swd20.discgolfbag.web.UserDetailServiceImpl;
 
 @Configuration
 @EnableWebSecurity
@@ -17,7 +17,7 @@ import hh.swd20.discgolfbag.web.UserDetailsServiceImpl;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
-	private UserDetailsServiceImpl userDetailsService;
+	private UserDetailServiceImpl userDetailsService;
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {

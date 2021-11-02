@@ -27,7 +27,7 @@
 				<div>
 					<h2>Signup</h2>
 				</div>
-				<form th:object="${signupform}" th:action="@{/saveuser}" action="#" method="post">
+				<form th:object="${signupform}" th:action="@{/savenewuser}" action="#" method="post">
 					<div>
 						<label> Username :<input type="text" th:field="*{username}" class="form-control" placeholder="Username" required /></label>
 						<p th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username Error</p>	
@@ -43,6 +43,13 @@
 					<div>
 						<label> Re-type Password: <input type="password" th:field="*{passwordCheck}" class="form-control" placeholder="Re-type password" required /></label>
 						<p th:if="${#fields.hasErrors('passwordCheck')}" th:errors="*{passwordCheck}">Password Match Error</p>	
+					</div>
+					<div>
+						<label for="role">Role</label>
+						<select id="role" th:field="*{role}" class="form-control" style="max-width: 100px">
+							<option selected value="USER">USER</option>
+							<option value="ADMIN">ADMIN</option>
+						</select>
 					</div>
 					
 					<input type="submit" class="btn btn-primary" value="Signup"></input>		

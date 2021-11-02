@@ -23,12 +23,12 @@ public class CategoryController {
 	
 	/*********************** RESTFUL SERVICES *********************************/
 	
-	@RequestMapping(value = "/categories", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/categories", method = RequestMethod.GET)
 	public @ResponseBody List<Category> getCategoriesRest() {
 		return (List<Category>) repository.findAll();
 	}
 	
-	@RequestMapping(value = "/categories/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/categories/{id}", method = RequestMethod.GET)
 	public @ResponseBody Optional<Category> findCategoryRest(@PathVariable("id") Long categoryId) {
 		return repository.findById(categoryId);
 	}
