@@ -1,10 +1,14 @@
 package hh.swd20.discgolfbag.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -20,7 +24,6 @@ public class Disc {
 	private int turn;
 	private int fade;
 	private String plastic;
-	private Boolean inBag;
 	
 	@ManyToOne
 	@JsonIgnoreProperties("discs")
@@ -32,10 +35,10 @@ public class Disc {
 	@JoinColumn(name = "companyId")
 	private Company company;
 	
-	@ManyToOne
+	@ManyToMany
 	@JsonIgnoreProperties("discs")
 	@JoinColumn(name = "bagId")
-	private DGBag bag; 
+	private List<DGBag> bags;
 
 	public Disc() {
 		super();
@@ -47,9 +50,9 @@ public class Disc {
 		this.plastic = null;
 		this.category = null;
 		this.company = null;
-		this.inBag = false;
+		this.bags = new ArrayList<DGBag>();
 	}
-
+	
 	public Disc(String name, int speed, int glide, int turn, int fade, String plastic, Category category,
 			Company company) {
 		super();
@@ -61,7 +64,7 @@ public class Disc {
 		this.plastic = plastic;
 		this.category = category;
 		this.company = company;
-		this.inBag = false;
+		this.bags = new ArrayList<DGBag>();
 	}
 
 	public Long getId() {
@@ -120,14 +123,6 @@ public class Disc {
 		this.plastic = plastic;
 	}
 
-	public Boolean getInBag() {
-		return inBag;
-	}
-
-	public void setInBag(Boolean inBag) {
-		this.inBag = inBag;
-	}
-
 	public Category getCategory() {
 		return category;
 	}
@@ -144,6 +139,18 @@ public class Disc {
 		this.company = company;
 	}
 	
+	public List<DGBag> getBags() {
+		return bags;
+	}
+	
+	public void setBags(List<DGBag> bags) {
+		this.bags = bags;
+	}
+	
+	public void addToBag(DGBag bag) {
+		this.bags.add(bag);
+	}
+
 	public String capitalize(String word) {
 		String words[] = word.split("\\s");
 		String outcome = "";

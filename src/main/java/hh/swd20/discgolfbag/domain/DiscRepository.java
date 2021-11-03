@@ -15,6 +15,4 @@ public interface DiscRepository extends CrudRepository<Disc, Long> {
 	@RestResource
 	public List<Disc> findByPlastic(@Param("plastic") String plastic);
 	
-	@RestResource
-	public List<Disc> findByInBag(@Param("true") Boolean inBag);
 }

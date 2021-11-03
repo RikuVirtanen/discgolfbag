@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,8 +18,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import hh.swd20.discgolfbag.domain.CategoryRepository;
 import hh.swd20.discgolfbag.domain.CompanyRepository;
+import hh.swd20.discgolfbag.domain.DGBag;
+import hh.swd20.discgolfbag.domain.DGBagRepository;
 import hh.swd20.discgolfbag.domain.Disc;
 import hh.swd20.discgolfbag.domain.DiscRepository;
+import hh.swd20.discgolfbag.domain.UserRepository;
 
 @CrossOrigin
 @Controller
@@ -33,16 +37,15 @@ public class DiscController {
 	@Autowired 
 	private CompanyRepository comRepository;
 	
+	@Autowired
+	private DGBagRepository bagRepository;
+	
+	@Autowired UserRepository userRepository;
+	
 	@RequestMapping(value = "/storage", method = RequestMethod.GET)
 	public String listDiscs(Model model) {
 		model.addAttribute("discs", dRepository.findAll());
 		return "storage";
-	}
-	
-	@RequestMapping(value = "/mybag", method = RequestMethod.GET)
-	public String listMyDiscs(Model model) {
-		model.addAttribute("discs", dRepository.findByInBag(true));
-		return "bag";
 	}
 	
 	/******************RESTFUL SERVICES **************************/
@@ -74,20 +77,13 @@ public class DiscController {
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public String saveDisc(@ModelAttribute Disc disc) {
 		disc.setName(disc.capitalize(disc.getName()));
-		disc.setSpeed(disc.getSpeed());
-		disc.setGlide(disc.getGlide());
-		disc.setTurn(disc.getTurn());
-		disc.setFade(disc.getFade());
 		disc.setPlastic(disc.capitalize(disc.getPlastic()));
-		disc.setInBag(disc.getInBag());
-		disc.setCategory(disc.getCategory());
-		disc.setCompany(disc.getCompany());
 		dRepository.save(disc);
 		return "redirect:/storage";
 	}
 	
 	@PreAuthorize(value = "hasAuthority('ADMIN')")
-	@RequestMapping(value = "/discadd", method = RequestMethod.GET)
+	@RequestMapping(value = "/storage/discadd", method = RequestMethod.GET)
 	public String addNewDisc(Model model) {
 		model.addAttribute("disc", new Disc());
 		model.addAttribute("categories", catRepository.findAll());
@@ -96,25 +92,32 @@ public class DiscController {
 	}
 	
 	@PreAuthorize(value = "hasAuthority('USER')")
-	@RequestMapping(value = "/add/{id}", method = RequestMethod.GET)
-	public String addDisc(@PathVariable("id") Long discId) {
+	@RequestMapping(value = "/storage/add/{discid}", method = RequestMethod.GET)
+	public String addDiscToBag(@PathVariable("discid") Long discId, Authentication auth) {
 		Disc disc = dRepository.findById(discId).get();
-		disc.setInBag(true);
+		Long userId = userRepository.findByUsername(auth.getName()).getId();
+		DGBag bag = bagRepository.findDGBagByUserId(userId).get();
+		disc.addToBag(bag);
 		dRepository.save(disc);
+		bag.addDisc(disc);
+		bagRepository.save(bag);
 		return "redirect:/storage";
 	}
 	
 	@PreAuthorize(value = "hasAuthority('USER')")
 	@RequestMapping(value = "/remove/{id}", method = RequestMethod.GET)
-	public String removeDisc(@PathVariable("id") Long discId) {
+	public String removeDisc(@PathVariable("id") Long discId, Authentication auth) {
 		Disc disc = dRepository.findById(discId).get();
-		disc.setInBag(false);
 		dRepository.save(disc);
+		Long userId = userRepository.findByUsername(auth.getName()).getId();
+		DGBag bag = bagRepository.findDGBagByUserId(userId).get();
+		bag.getDiscs().remove(disc);
+		bagRepository.save(bag);
 		return "redirect:/mybag";
 	}
 	
 	@PreAuthorize(value = "hasAuthority('ADMIN')")
-	@RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/storage/edit/{id}", method = RequestMethod.GET)
 	public String editDisc(@PathVariable("id") Long discId, Model model) {
 		model.addAttribute("disc", dRepository.findById(discId).get());
 		model.addAttribute("categories", catRepository.findAll());
@@ -123,7 +126,7 @@ public class DiscController {
 	}
 	
 	@PreAuthorize(value = "hasAuthority('ADMIN')")
-	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "storage/delete/{id}", method = RequestMethod.GET)
 	public String deleteDisc(@PathVariable("id") Long discId) {
 		dRepository.deleteById(discId);
 		return "redirect:/storage";

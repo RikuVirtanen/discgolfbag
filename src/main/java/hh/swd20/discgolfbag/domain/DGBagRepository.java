@@ -11,4 +11,6 @@ public interface DGBagRepository extends CrudRepository<DGBag, Long>{
 	
 	public Optional <DGBag> findDGBagByUserId(@Param("id") Long userId);
 	
+	public DGBag findBagByUserId(Long id);
+	
 }

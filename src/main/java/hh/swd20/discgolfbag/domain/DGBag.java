@@ -3,16 +3,13 @@ package hh.swd20.discgolfbag.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 public class DGBag {
@@ -24,11 +21,11 @@ public class DGBag {
 	private String color;
 	
 	@OneToOne
-	@JsonIgnoreProperties("discs")
 	@JoinColumn(name = "userId")
 	private User user;
 	
-	@OneToMany(cascade = CascadeType.MERGE, mappedBy = "bag")
+	@ManyToMany
+	@JoinColumn(name = "discId")
 	private List<Disc> discs;
 	
 	public DGBag() {
@@ -88,6 +85,10 @@ public class DGBag {
 
 	public void setDiscs(List<Disc> discs) {
 		this.discs = discs;
+	}
+	
+	public void addDisc(Disc disc) {
+		this.discs.add(disc);
 	}
 	
 	public User getUser() {

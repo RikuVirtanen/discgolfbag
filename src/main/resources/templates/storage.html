@@ -36,7 +36,6 @@
 						<th>NAME</th>
 						<th>PLASTIC</th>
 						<th>COMPANY</th>
-						<th>BAG</th>
 						<th></th>
 						<th sec:authorize="hasAuthority('USER')"></th>
 						<th sec:authorize="hasAuthority('ADMIN')"></th>
@@ -48,13 +47,12 @@
 						<td th:text="${disc.name}"></td>
 						<td th:text="${disc.plastic}"></td>
 						<td th:text="${disc?.company?.name}"></td>
-						<td th:text="${disc.inBag}"></td>
 						<td></td>
 						<td sec:authorize="hasAuthority('USER')">
-							<a class="btn btn-success" th:href="@{/add/{id}(id=${disc.id})}" >Add</a>
+							<a class="btn btn-success" th:href="@{/storage/add/{id}(id=${disc.id})}" >Add</a>
 						</td>
 						<td sec:authorize="hasAuthority('ADMIN')">
-							<a class="btn btn-success" th:href="@{/edit/{id}(id=${disc.id})}" >Edit</a>
+							<a class="btn btn-success" th:href="@{/storage/edit/{id}(id=${disc.id})}" >Edit</a>
 						</td>
 						<td sec:authorize="hasAuthority('ADMIN')">
 							<a 

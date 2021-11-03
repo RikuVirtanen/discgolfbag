@@ -46,7 +46,7 @@
 						<td th:text="${user.role}"></td>
 						<td th:text="${user.username}"></td>
 						<td th:text="${user.email}"></td>
-						<td><a th:href="@{/mybag}">bag</a><td>
+						<td><a th:href="@{/findusersbag/{id}(id=${user.id})}">bag</a><td>
 						<td></td>
 						<td sec:authorize="hasAuthority('ADMIN')">
 							<a class="btn btn-success" th:href="@{/edituser/{id}(id=${user.id})}" >Edit</a>

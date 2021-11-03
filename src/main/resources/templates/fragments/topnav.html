@@ -12,7 +12,7 @@
 					<a class="nav-link" href="/storage">Storage <span class="sr-only">(current)</span></a>
 				</li>
 				<li class="nav-item" sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
-					<a class="nav-link" href="/mybag">[[${#httpServletRequest.remoteUser}]]'s bag</a>
+					<a class="nav-link" href="/mybag" >[[${#httpServletRequest.remoteUser}]]'s bag</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="/users">Users</a>

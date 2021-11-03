@@ -7,6 +7,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -55,6 +56,12 @@ public class UserController {
 		return repository.findById(userId);
 	}
 	
+	@RequestMapping(value="/username", method = RequestMethod.GET)
+	@ResponseBody
+	public String currentUsername(Authentication auth) {
+		return auth.getName();
+	}
+	
 	/************************************************************************/
 	
 	@RequestMapping(value = "/saveuser", method = RequestMethod.POST)
@@ -70,6 +77,7 @@ public class UserController {
 				newUser.setUsername(signupForm.getUsername());
 				newUser.setEmail(signupForm.getEmail());
 				newUser.setRole("USER");
+
 				if(repository.findByUsername(signupForm.getUsername()) == null) {
 					repository.save(newUser);
 				}

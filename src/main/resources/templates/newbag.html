@@ -11,7 +11,7 @@
 <link type="text/css" rel="stylesheet" href="css/styles.css" th:href="@{css/styles.css}" /> 
 <script src="https://kit.fontawesome.com/17a4ce7e95.js" crossorigin="anonymous"></script>
 <script type="text/javascript" th:src="@{/js/script.js}" defer></script>
-<title>Insert title here</title>
+<title>Bag creation</title>
 </head>
 <body>
 	<header>
@@ -25,26 +25,26 @@
 		<div class="flex-item login-container">
 			<div class="content">
 				<div>
-					<h2>Signup</h2>
+					<h2>Create your bag</h2>
 				</div>
-				<form th:object="${signupform}" th:action="@{/saveuser}" action="#" method="post">
-					<div>
-						<label> Username :<input type="text" th:field="*{username}" class="form-control" placeholder="Username" required /></label>
-						<p th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username Error</p>	
+				<form th:object="${bag}" th:action="@{/savebag}" action="#" method="post">
+					<div class="form-group">
+						<label hidden="hidden" for="id">Id</label>
+						<input class="form-control" type="hidden" id="id" th:field="${bag.id}" />
 					</div>
-					<div>
-						<label> Email :<input type="email" th:field="*{email}" class="form-control" placeholder="E-mail" required /></label>
-						<p th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</p>	
+					
+					<div class="form-group">
+						<label for="name">Name</label>
+						<input class="form-control" type="text" id="name" th:field="${bag.name}" />
 					</div>
-					<div>
-						<label> Password :<input type="password" th:field="*{password}" class="form-control" placeholder="Password" required /></label>
-						<p th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</p>	
+					
+					<div class="form-group">
+						<label for="plastic">Color</label>
+						<input class="form-control" type="text" id="color" th:field="${bag.color}" />
 					</div>
-					<div>
-						<label> Re-type Password: <input type="password" th:field="*{passwordCheck}" class="form-control" placeholder="Re-type password" required /></label>
-						<p th:if="${#fields.hasErrors('passwordCheck')}" th:errors="*{passwordCheck}">Password Match Error</p>	
-					</div>
-					<input type="submit" class="btn btn-primary" value="Signup"></input>		
+					
+					<button class="btn btn-secondary" type="submit">Save</button>
+					<button class="btn" type="reset">Reset</button>
 				</form>
 			</div>
 		</div>

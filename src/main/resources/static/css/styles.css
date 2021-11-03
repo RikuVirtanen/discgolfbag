@@ -52,6 +52,7 @@ footer {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	margin-top: 100px;
 }
 
 .content {
@@ -62,6 +63,10 @@ footer {
 .form {
 	display: flex;
 	flex-direction: column;
+}
+
+.table {
+	margin-top: 100px;
 }
 
 .side-container {
@@ -76,6 +81,7 @@ footer {
 	text-align: center;
 	align-items: center;
 	justify-content: center;
+	margin-top: 100px;
 }
 
 .text-box .add-btn {
