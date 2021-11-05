@@ -4,9 +4,9 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <link type="text/css" rel="stylesheet" href="/css/styles.css" th:href="@{/css/styles.css}" /> 
 <script src="https://kit.fontawesome.com/17a4ce7e95.js" crossorigin="anonymous"></script>
 <script type="text/javascript" th:src="@{/js/script.js}" defer></script>
@@ -16,35 +16,50 @@
 	<header>
 		<div class="nav" th:replace="fragments/topnav :: navbar"></div>
 	</header>
-	<div class="clear"></div>
-	<div class="d-flex justify-content-between ">
+	<div class="d-flex justify-content-between container">
 		<div class="flex-item">
 			<div class="side-container"></div>
 		</div>
 		<div class="flex-item main-container">
-			<div class="text-box">
-				<h1 th:text="${user.username}"></h1>
-			</div>
-			<div class="clear"></div>
-			<table class="table table-dark table-striped table-hover">
+			<h1 th:text="${user.username} + '\'s virtual discgolf bag'"></h1>
+			<p th:if="${me.username} == ${user.username}" >Here is your disc selection.</p>
+			<table class="table table-dark table-striped table-hover list">
 				<tr>
 					<th></th>
 					<th>TYPE</th>
-					<th>NAME</th>
+					<th></th>
 					<th>PLASTIC</th>
+					<th></th>
+					<th>NAME</th>
+					<th></th>
+					<th>
+						ATTRIBUTES
+						<br>
+						S | G | T | F
+					</th>
+					<th></th>
 					<th>COMPANY</th>
 					<th></th>
-					<th sec:authorize="hasAuthority('USER')"></th>
+					<th th:if="${me.username} == ${user.username}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')"></th>
+					<th th:if="${me.username} != ${user.username} and ${bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')"></th>
 				</tr>
 				<tr th:each = "disc : ${discs}">
 					<td></td>
 					<td th:text="${disc?.category?.name}"></td>
-					<td th:text="${disc.name}"></td>
+					<td></td>
 					<td th:text="${disc.plastic}"></td>
+					<td></td>
+					<td th:text="${disc.name}"></td>
+					<td></td>
+					<td th:text="${disc.speed} + ' | ' + ${disc.glide} + ' | ' + ${disc.turn} + ' | ' + ${disc.fade}"></td>
+					<td></td>
 					<td th:text="${disc?.company?.name}"></td>
 					<td></td>
-					<td sec:authorize="hasAuthority('USER')">
-						<a class="btn btn-success" th:href="@{/remove/{id}(id=${disc.id})}" >Remove</a>
+					<td th:if="${me.username} == ${user.username}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
+						<a class="btn btn-warning" th:href="@{/bags/remove/{id}(id=${disc.id})}" >Remove</a>
+					</td>
+					<td th:if="${me.username} != ${user.username} and ${!bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
+						<a class="btn btn-success" th:href="@{/users/{userid}/add/{discid}(userid=${user.id}, discid=${disc.id})}" >Add</a>
 					</td>
 					
 				</tr>

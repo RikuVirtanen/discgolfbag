@@ -1,7 +1,6 @@
 package hh.swd20.discgolfbag.web;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -19,19 +18,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import hh.swd20.discgolfbag.domain.DGBag;
-import hh.swd20.discgolfbag.domain.DGBagRepository;
+import hh.swd20.discgolfbag.domain.Disc;
 import hh.swd20.discgolfbag.domain.SignupForm;
 import hh.swd20.discgolfbag.domain.User;
-import hh.swd20.discgolfbag.domain.UserRepository;
+import hh.swd20.discgolfbag.services.DGBagService;
+import hh.swd20.discgolfbag.services.DiscService;
+import hh.swd20.discgolfbag.services.UserService;
 
 @Controller
 public class UserController {
 	
-	@Autowired
-	private UserRepository repository;
-	
-	@Autowired
-	private DGBagRepository bRepository;
+	@Autowired private DGBagService bagService;
+	@Autowired private UserService userService;
+	@Autowired private DiscService discService;
 	
 	@RequestMapping(value = "/signup", method = RequestMethod.GET)
 	public String signUser(Model model) {
@@ -41,22 +40,22 @@ public class UserController {
 	
 	/********************* RESTFUL SERVICES *********************************/
 	
-	@RequestMapping(value="/api/user/bag/{id}", method = RequestMethod.GET)
-	public @ResponseBody Optional <DGBag> findDGBagByUserId(@PathVariable("id") Long userId) {
-		return bRepository.findDGBagByUserId(userId);
+	@RequestMapping(value="/api/users/bag/{id}", method = RequestMethod.GET)
+	public @ResponseBody DGBag findDGBagByUserId(@PathVariable("id") Long userId) {
+		return bagService.getDGBagByUserId(userId);
 	}
 	
 	@RequestMapping(value="/api/users", method = RequestMethod.GET)
 	public @ResponseBody List <User> findUsersRest() {
-		return (List<User>) repository.findAll();
+		return userService.getAll();
 	}
 	
-	@RequestMapping(value="/api/user/{id}", method = RequestMethod.GET)
-	public @ResponseBody Optional <User> findUserById(@PathVariable("id") Long userId) {
-		return repository.findById(userId);
+	@RequestMapping(value="/api/users/{id}", method = RequestMethod.GET)
+	public @ResponseBody User findUserById(@PathVariable("id") Long userId) {
+		return userService.getById(userId);
 	}
 	
-	@RequestMapping(value="/username", method = RequestMethod.GET)
+	@RequestMapping(value="/api/users/username", method = RequestMethod.GET)
 	@ResponseBody
 	public String currentUsername(Authentication auth) {
 		return auth.getName();
@@ -64,7 +63,7 @@ public class UserController {
 	
 	/************************************************************************/
 	
-	@RequestMapping(value = "/saveuser", method = RequestMethod.POST)
+	@RequestMapping(value = "/users/saveuser", method = RequestMethod.POST)
 	public String save(@Valid @ModelAttribute("signupform") SignupForm signupForm, BindingResult bindingResult) {
 		if (!bindingResult.hasErrors()) {
 			if(signupForm.getPassword().equals(signupForm.getPasswordCheck())) {
@@ -74,12 +73,14 @@ public class UserController {
 				
 				User newUser = new User();
 				newUser.setPasswordHash(hashPwd);
-				newUser.setUsername(signupForm.getUsername());
+				newUser.setUsername(signupForm.getUsername().toLowerCase());
 				newUser.setEmail(signupForm.getEmail());
 				newUser.setRole("USER");
 
-				if(repository.findByUsername(signupForm.getUsername()) == null) {
-					repository.save(newUser);
+				if(userService.findByUsername(newUser.getUsername()).isEmpty()) {
+					userService.save(newUser);
+					DGBag bag = new DGBag(newUser.getUsername() + "'s bag", "Default", newUser);
+					bagService.save(bag);
 				}
 				else {
 					bindingResult.rejectValue("username", "err.username", "Username already exists!");
@@ -97,7 +98,7 @@ public class UserController {
 		return "redirect:/login";
 	}
 	
-	@RequestMapping(value = "/savenewuser", method = RequestMethod.POST)
+	@RequestMapping(value = "/users/savenewuser", method = RequestMethod.POST)
 	public String saveNewUser(@Valid @ModelAttribute("signupform") SignupForm signupForm, BindingResult bindingResult) {
 		if (!bindingResult.hasErrors()) {
 			if(signupForm.getPassword().equals(signupForm.getPasswordCheck())) {
@@ -110,12 +111,14 @@ public class UserController {
 				newUser.setUsername(signupForm.getUsername());
 				newUser.setEmail(signupForm.getEmail());
 				newUser.setRole(signupForm.getRole());
-				if(repository.findByUsername(signupForm.getUsername()) == null) {
-					repository.save(newUser);
+				if(userService.findByUsername(newUser.getUsername()).isEmpty()) {
+					userService.save(newUser);
+					DGBag bag = new DGBag(newUser.getUsername() + "'s bag", "Default", newUser);
+					bagService.save(bag);
 				}
 				else {
 					bindingResult.rejectValue("username", "err.username", "Username already exists!");
-					return "adduser";
+					return "/users/adduser";
 				}
 			}
 			else {
@@ -126,39 +129,62 @@ public class UserController {
 		else {
 			return "adduser";
 		}
-		return "redirect:/users";
+		return "redirect:/userlist";
 	}
 	
-	@RequestMapping(value = "/saveolduser", method = RequestMethod.POST)
+	@RequestMapping(value = "/users/saveolduser", method = RequestMethod.POST)
 	public String saveOldUser(@ModelAttribute User user) {
-		repository.save(user);
+		userService.save(user);
 		return "redirect:/users";
 	}
 	
 	@RequestMapping(value = "/users", method = RequestMethod.GET)
-	public String listUsers(Model model) {
-		model.addAttribute("users", repository.findAll());
-		return "users";
+	public String listUsers(Model model, String keyword) {
+		
+		if(keyword != null) {
+			model.addAttribute("users", userService.findByKeyword(keyword));
+		} else {
+			model.addAttribute("users", userService.getAll());
+		}
+		return "userlist";
 	}
 	
 	@PreAuthorize(value = "hasAuthority('ADMIN')")
-	@RequestMapping(value="/adduser", method = RequestMethod.GET)
+	@RequestMapping(value="/users/adduser", method = RequestMethod.GET)
 	public String addUser(Model model) {
 		model.addAttribute("signupform", new SignupForm());
 		return "adduser";
 	}
 	
 	@PreAuthorize(value = "hasAuthority('ADMIN')")
-	@RequestMapping(value="/edituser/{id}", method = RequestMethod.GET)
+	@RequestMapping(value="/users/edituser/{id}", method = RequestMethod.GET)
 	public String editUser(@PathVariable("id") Long userId, Model model) {
-		model.addAttribute("user", repository.findById(userId));
+		model.addAttribute("user", userService.getById(userId));
 		return "edituser";
 	}
 	
 	@PreAuthorize(value = "hasAuthority('ADMIN')")
-	@RequestMapping(value="/deleteuser/{id}", method = RequestMethod.GET)
+	@RequestMapping(value="/users/deleteuser/{id}", method = RequestMethod.GET)
 	public String deleteUser(@PathVariable("id") Long userId, Model model) {
-		repository.deleteById(userId);
+		bagService.delete(bagService.getDGBagByUserId(userId));
+		userService.delete(userService.getById(userId));
 		return "redirect:/users";
+	}
+	
+	@PreAuthorize(value = "hasAnyAuthority('USER', 'ADMIN')")
+	@RequestMapping(value = "/users/{userid}/add/{discid}", method = RequestMethod.GET)
+	public String addDiscFromUser(@PathVariable("userid") Long userId, @PathVariable("discid") Long discId, Authentication auth, Model model) {
+		Disc disc = discService.getById(discId);
+		Long myId = userService.getByUsername(auth.getName()).getId();
+		DGBag bag = bagService.getDGBagByUserId(myId);
+		if (!bag.getDiscs().contains(disc)) {
+			disc.addToBag(bag);
+			discService.save(disc);
+			bag.addDisc(disc);
+			bagService.save(bag);
+		} 
+		model.addAttribute("userid", userId);
+		
+		return "redirect:/bags/findusersbag/{userid}";
 	}
 }

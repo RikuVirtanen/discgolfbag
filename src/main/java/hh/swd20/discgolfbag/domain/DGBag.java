@@ -105,7 +105,7 @@ public class DGBag {
 		for (String w: words) {
 			String first = w.substring(0, 1);
 			String rest = w.substring(1);
-			outcome += first.toUpperCase() + rest + " ";
+			outcome += first.toUpperCase() + rest.toLowerCase() + " ";
 		}
 		
 		return outcome.trim();

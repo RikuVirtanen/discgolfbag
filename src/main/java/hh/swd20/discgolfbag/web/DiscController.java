@@ -1,7 +1,6 @@
 package hh.swd20.discgolfbag.web;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,120 +15,127 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import hh.swd20.discgolfbag.domain.CategoryRepository;
-import hh.swd20.discgolfbag.domain.CompanyRepository;
 import hh.swd20.discgolfbag.domain.DGBag;
-import hh.swd20.discgolfbag.domain.DGBagRepository;
 import hh.swd20.discgolfbag.domain.Disc;
-import hh.swd20.discgolfbag.domain.DiscRepository;
-import hh.swd20.discgolfbag.domain.UserRepository;
+import hh.swd20.discgolfbag.services.CategoryService;
+import hh.swd20.discgolfbag.services.CompanyService;
+import hh.swd20.discgolfbag.services.DGBagService;
+import hh.swd20.discgolfbag.services.DiscService;
+import hh.swd20.discgolfbag.services.UserService;
 
 @CrossOrigin
 @Controller
 public class DiscController {
 	
-	@Autowired
-	private DiscRepository dRepository;
+	@Autowired private DiscService discService;
+	
+	@Autowired private UserService userService;
 	
 	@Autowired 
-	private CategoryRepository catRepository;
+	private CategoryService categoryService;
 	
 	@Autowired 
-	private CompanyRepository comRepository;
+	private CompanyService companyService;
 	
 	@Autowired
-	private DGBagRepository bagRepository;
+	private DGBagService bagService;
 	
-	@Autowired UserRepository userRepository;
-	
-	@RequestMapping(value = "/storage", method = RequestMethod.GET)
-	public String listDiscs(Model model) {
-		model.addAttribute("discs", dRepository.findAll());
+	@RequestMapping(value = "/discs/storage", method = RequestMethod.GET)
+	public String storage(Model model, String keyword, Authentication auth) {
+		if(keyword != null) {
+			model.addAttribute("discs", discService.getDiscsByKeyword(keyword));
+		} else {
+			model.addAttribute("discs", discService.getDiscs());
+		}
+		model.addAttribute("bag", bagService.getDGBagByUserId(userService.getByUsername(auth.getName()).getId()).getDiscs());
 		return "storage";
 	}
 	
 	/******************RESTFUL SERVICES **************************/
 	
-	@RequestMapping(value = "/discs", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/discs", method = RequestMethod.GET)
 	public @ResponseBody List<Disc> discList() {
-		return (List<Disc>) dRepository.findAll();
+		return discService.getDiscs();
 	}
 	
-	@RequestMapping(value = "/discs/{id}", method = RequestMethod.GET)
-	public @ResponseBody Optional<Disc> findDiscRest(@PathVariable("id") Long discId) {
-		return dRepository.findById(discId);
+	@RequestMapping(value = "/api/discs/{id}", method = RequestMethod.GET)
+	public @ResponseBody Disc findDiscRest(@PathVariable("id") Long discId) {
+		return discService.getById(discId);
 	}
 	
-	@RequestMapping(value = "/discs/{name}", method = RequestMethod.GET)
-	public @ResponseBody Optional<Disc> findDiscRest(@PathVariable("name") String discName) {
-		return dRepository.findByName(discName);
+	@RequestMapping(value = "/api/discs/{name}", method = RequestMethod.GET)
+	public @ResponseBody Disc findDiscRest(@PathVariable("name") String discName) {
+		return discService.getByName(discName);
 	}
 	
 	@PreAuthorize(value = "hasAuthority('ADMIN')")
-	@RequestMapping(value = "/discs", method = RequestMethod.POST)
-	public @ResponseBody Disc saveDiscRest(@RequestBody Disc disc) {
-		return dRepository.save(disc);
+	@RequestMapping(value = "/api/discs", method = RequestMethod.POST)
+	public @ResponseBody void saveDiscRest(@RequestBody Disc disc) {
+		discService.save(disc);
 	}
 	
 	/*************************************************************/
 	
 	@PreAuthorize(value = "hasAuthority('ADMIN')")
-	@RequestMapping(value = "/save", method = RequestMethod.POST)
+	@RequestMapping(value = "/discs/save", method = RequestMethod.POST)
 	public String saveDisc(@ModelAttribute Disc disc) {
 		disc.setName(disc.capitalize(disc.getName()));
 		disc.setPlastic(disc.capitalize(disc.getPlastic()));
-		dRepository.save(disc);
-		return "redirect:/storage";
+		disc.setSpeed(disc.getSpeed());
+		disc.setGlide(disc.getGlide());
+		disc.setTurn(disc.getTurn());
+		disc.setFade(disc.getFade());
+		discService.save(disc);
+		return "redirect:/discs/storage";
 	}
 	
 	@PreAuthorize(value = "hasAuthority('ADMIN')")
-	@RequestMapping(value = "/storage/discadd", method = RequestMethod.GET)
+	@RequestMapping(value = "/discs/storage/addnew", method = RequestMethod.GET)
 	public String addNewDisc(Model model) {
 		model.addAttribute("disc", new Disc());
-		model.addAttribute("categories", catRepository.findAll());
-		model.addAttribute("companies", comRepository.findAll());
+		model.addAttribute("categories", categoryService.getAll());
+		model.addAttribute("companies", companyService.getAll());
 		return "discadd";
 	}
 	
-	@PreAuthorize(value = "hasAuthority('USER')")
-	@RequestMapping(value = "/storage/add/{discid}", method = RequestMethod.GET)
+	@PreAuthorize(value = "hasAnyAuthority('USER', 'ADMIN')")
+	@RequestMapping(value = "/discs/storage/add/{discid}", method = RequestMethod.GET)
 	public String addDiscToBag(@PathVariable("discid") Long discId, Authentication auth) {
-		Disc disc = dRepository.findById(discId).get();
-		Long userId = userRepository.findByUsername(auth.getName()).getId();
-		DGBag bag = bagRepository.findDGBagByUserId(userId).get();
-		disc.addToBag(bag);
-		dRepository.save(disc);
-		bag.addDisc(disc);
-		bagRepository.save(bag);
-		return "redirect:/storage";
-	}
-	
-	@PreAuthorize(value = "hasAuthority('USER')")
-	@RequestMapping(value = "/remove/{id}", method = RequestMethod.GET)
-	public String removeDisc(@PathVariable("id") Long discId, Authentication auth) {
-		Disc disc = dRepository.findById(discId).get();
-		dRepository.save(disc);
-		Long userId = userRepository.findByUsername(auth.getName()).getId();
-		DGBag bag = bagRepository.findDGBagByUserId(userId).get();
-		bag.getDiscs().remove(disc);
-		bagRepository.save(bag);
-		return "redirect:/mybag";
+		Disc disc = discService.getById(discId);
+		Long userId = userService.getByUsername(auth.getName()).getId();
+		DGBag bag = bagService.getDGBagByUserId(userId);
+		if (!bag.getDiscs().contains(disc)) {
+			disc.addToBag(bag);
+			discService.save(disc);
+			bag.addDisc(disc);
+			bagService.save(bag);
+		} 
+		
+		return "redirect:/discs/storage";
 	}
 	
 	@PreAuthorize(value = "hasAuthority('ADMIN')")
-	@RequestMapping(value = "/storage/edit/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/discs/storage/editdisc/{id}", method = RequestMethod.GET)
 	public String editDisc(@PathVariable("id") Long discId, Model model) {
-		model.addAttribute("disc", dRepository.findById(discId).get());
-		model.addAttribute("categories", catRepository.findAll());
-		model.addAttribute("companies", comRepository.findAll());
+		model.addAttribute("disc", discService.getById(discId));
+		model.addAttribute("categories", categoryService.getAll());
+		model.addAttribute("companies", companyService.getAll());
 		return "editdisc";
 	}
 	
 	@PreAuthorize(value = "hasAuthority('ADMIN')")
-	@RequestMapping(value = "storage/delete/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/discs/storage/deletedisc/{id}", method = RequestMethod.GET)
 	public String deleteDisc(@PathVariable("id") Long discId) {
-		dRepository.deleteById(discId);
-		return "redirect:/storage";
+		Disc disc = discService.getById(discId);
+		List<DGBag> bags = bagService.getAll();
+		for(DGBag b: bags) {
+			if (b.getDiscs().contains(disc)) {
+				b.getDiscs().remove(disc);
+				bagService.save(b);
+			}
+		}
+		discService.delete(disc);
+		return "redirect:/discs/storage";
 	}
 	
 }

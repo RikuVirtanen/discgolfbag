@@ -1,7 +1,6 @@
 package hh.swd20.discgolfbag.web;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,37 +15,37 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import hh.swd20.discgolfbag.domain.Company;
-import hh.swd20.discgolfbag.domain.CompanyRepository;
+import hh.swd20.discgolfbag.services.CompanyService;
 
 @CrossOrigin
 @Controller
 public class CompanyController {
 	
 	@Autowired
-	private CompanyRepository repository;
+	private CompanyService companyService;
 	
 	/******************************** RESTFUL SERVICES *****************************************/
 	
 	@RequestMapping(value = "/companies", method = RequestMethod.GET)
 	public @ResponseBody List<Company> getCompaniesRest() {
-		return (List<Company>) repository.findAll();
+		return companyService.getAll();
 	}
 	
 	@RequestMapping(value = "/companies/{id}", method=RequestMethod.GET)
-	public @ResponseBody Optional<Company> findCompanyRest(@PathVariable("id") Long companyId) {
-		return repository.findById(companyId);
+	public @ResponseBody Company findCompanyRest(@PathVariable("id") Long companyId) {
+		return companyService.getById(companyId);
 	}
 	
 	@RequestMapping(value = "/companies", method = RequestMethod.POST)
-	public @ResponseBody Company saveCompanyRest(@RequestBody Company company) {
-		return repository.save(company);
+	public @ResponseBody void saveCompanyRest(@RequestBody Company company) {
+		companyService.save(company);
 	}
 	
 	/********************************************************************************************/
 	
 	@RequestMapping(value="/companylist", method=RequestMethod.GET)
 	public String listCompanies(Model model) {
-		model.addAttribute("companies", repository.findAll());
+		model.addAttribute("companies", companyService.getAll());
 		return "companylist";
 	}
 	
@@ -58,24 +57,23 @@ public class CompanyController {
 	
 	@RequestMapping(value="/savecompany", method=RequestMethod.POST)
 	public String saveCompany(@ModelAttribute Company company) {
-		if(!repository.findByName(company.capitalize(company.getName())).isEmpty()) {
+		if(companyService.getByName(company.capitalize(company.getName())) != null) {
 			return "redirect:/companylist";
 		}
 		company.setName(company.capitalize(company.getName()));
-		repository.save(company);
+		companyService.save(company);
 		return "redirect:/companylist";
 	}
 	@PreAuthorize(value="hasAuthority('ADMIN')")
 	@RequestMapping(value="/editcompany/{id}", method=RequestMethod.GET)
 	public String editCompany(@PathVariable("id") Long companyId, Model model) {
-		model.addAttribute("company", repository.findById(companyId).get());
+		model.addAttribute("company", companyService.getById(companyId));
 		return "/editcompany";
 	}
 	@PreAuthorize(value="hasAuthority('ADMIN')")
 	@RequestMapping(value="/deletecompany/{id}", method=RequestMethod.GET)
 	public String deleteCompany(@PathVariable("id") Long companyId) {
-		
-		repository.deleteById(companyId);
+		companyService.delete(companyService.getById(companyId));
 		return "redirect:../companylist";
 	}
 }

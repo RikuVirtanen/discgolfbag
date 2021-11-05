@@ -27,22 +27,41 @@
 				<div>
 					<h2>Signup</h2>
 				</div>
-				<form th:object="${signupform}" th:action="@{/saveuser}" action="#" method="post">
-					<div>
-						<label> Username :<input type="text" th:field="*{username}" class="form-control" placeholder="Username" required /></label>
-						<p th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username Error</p>	
+				<form th:object="${signupform}" th:action="@{/users/saveuser}" action="#" method="post">
+					<div class="input-container">
+						<label> Username :
+						<span class="input-help">
+							<input type="text" th:field="*{username}" class="form-control" placeholder="Username" required />
+							<small class="input-helper">Usernames are set to lower case!</small>
+						</span>
+						</label>
+						<p class="error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username Error</p>
+
 					</div>
-					<div>
-						<label> Email :<input type="email" th:field="*{email}" class="form-control" placeholder="E-mail" required /></label>
-						<p th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</p>	
+					<div class="input-container">
+						<label> Email :
+							<span class="input-help">
+								<input type="email" th:field="*{email}" class="form-control" placeholder="E-mail" required />
+							</span>
+						</label>
+						<p class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</p>	
 					</div>
-					<div>
-						<label> Password :<input type="password" th:field="*{password}" class="form-control" placeholder="Password" required /></label>
-						<p th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</p>	
+					<div class="input-container">
+						<label> Password :
+							<span class="input-help">
+								<input type="password" th:field="*{password}" class="form-control" placeholder="Password" required />
+								<small class="input-helper">Password must be 7 to 30 characters long!</small>
+							</span>
+						</label>
+						<p class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</p>	
 					</div>
-					<div>
-						<label> Re-type Password: <input type="password" th:field="*{passwordCheck}" class="form-control" placeholder="Re-type password" required /></label>
-						<p th:if="${#fields.hasErrors('passwordCheck')}" th:errors="*{passwordCheck}">Password Match Error</p>	
+					<div class="input-container">
+						<label> Re-type Password: 
+							<span class="input-help">
+								<input type="password" th:field="*{passwordCheck}" class="form-control" placeholder="Re-type password" required />
+							</span>		
+						</label>
+						<p class="error" th:if="${#fields.hasErrors('passwordCheck')}" th:errors="*{passwordCheck}">Password Match Error</p>	
 					</div>
 					<input type="submit" class="btn btn-primary" value="Signup"></input>		
 				</form>

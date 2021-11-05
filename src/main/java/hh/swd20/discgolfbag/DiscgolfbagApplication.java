@@ -1,8 +1,5 @@
 package hh.swd20.discgolfbag;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -68,24 +65,14 @@ public class DiscgolfbagApplication {
 			// create users: admin/admin user/user
 			ur.save(new User("user", "user@user.com", "$2a$10$7fDUJhaHcW..lozviLnwbuOw6G8VK/tHq4ew/Vo5J47LEX/SUv/KS", "USER"));
 			ur.save(new User("admin", "admin@admin.com", "$2a$10$FfqOrHQA9ACQQCVIM7wSNeQqfMN/Seix1zVjWgQWPSbiI4qL7dFo6", "ADMIN"));
-			ur.save(new User("hylkki", "hylkki@email.com", "$2a$10$FfqOrHQA9ACQQCVIM7wSNeQqfMN/Seix1zVjWgQWPSbiI4qL7dFo6", "USER"));
 			
 			log.info("fetch all users");
 			for(User user: ur.findAll()) {
 				log.info(user.toString());
 			}
 			
-			List<Disc> discs1 = new ArrayList<Disc>();
-			discs1.add(dr.findByName("Tern").get());
-			discs1.add(dr.findByName("River").get());
-			
-			DGBr.save(new DGBag("user's bag", "Blue", ur.findByUsername("user"), discs1));
-			
-			List<Disc> discs2 = new ArrayList<Disc>();
-
-			discs2.add(dr.findByName("Method").get());
-			discs2.add(dr.findByName("Faith").get());
-			DGBr.save(new DGBag("admin's bag", "Red", ur.findByUsername("admin"), discs2));
+			DGBr.save(new DGBag("user's bag", "Blue", ur.findByUsername("user").get()));
+			DGBr.save(new DGBag("admin's bag", "Red", ur.findByUsername("admin").get()));
 			
 			log.info("fetch all DGBags");
 			for(DGBag bag: DGBr.findAll()) {

@@ -27,7 +27,7 @@
 					<h1>Edit disc</h1>
 				</div>
 				<div class="clear"></div>
-				<form th:object="${disc}" th:action="@{/save}" action="#" method="post">
+				<form th:object="${disc}" th:action="@{/discs/save}" action="#" method="post">
 					<div class="form-group">
 						<label hidden="hidden" for="id">Id</label>
 						<input class="form-control" type="hidden" id="id" th:field="${disc.id}" />
@@ -41,6 +41,26 @@
 					<div class="form-group">
 						<label for="plastic">Plastic</label>
 						<input class="form-control" type="text" id="plastic" th:field="${disc.plastic}" />
+					</div>
+					
+					<div class="form-group">
+						<label hidden="hidden" for="speed">Id</label>
+						<input class="form-control" type="hidden" id="speed" th:field="${disc.speed}" />
+					</div>
+					
+					<div class="form-group">
+						<label hidden="hidden" for="glide">Id</label>
+						<input class="form-control" type="hidden" id="glide" th:field="${disc.glide}" />
+					</div>
+					
+					<div class="form-group">
+						<label hidden="hidden" for="turn">Id</label>
+						<input class="form-control" type="hidden" id="turn" th:field="${disc.turn}" />
+					</div>
+					
+					<div class="form-group">
+						<label hidden="hidden" for="fade">Id</label>
+						<input class="form-control" type="hidden" id="fade" th:field="${disc.fade}" />
 					</div>
 					
 					<div class="form-group">

@@ -27,7 +27,7 @@
 				<div class="text-box">
 					<h1>Welcome</h1>
 					<h2 sec:authorize="hasAnyAuthority('USER', 'ADMIN')">[[${#httpServletRequest.remoteUser}]]</h2>
-					<h5>to discgolf bag creation app</h5>
+					<h5>to create virtual discgolf bag</h5>
 				</div>
 				<div class="clear"></div>
 				<div class="text-box">
@@ -47,7 +47,10 @@
 					bags choosing discs from storage. Discs chosen 
 					from storage are shown in user's bag tab. Users 
 					can also find other users and checkout their 
-					bags (not implemented yet)</p>
+					bags. Empty discgolf bag is created when user 
+					signs up. From there users can go and fill that 
+					bag with the discs they want. Admins will implement
+					more discs to storage.</p>
 					
 					<div class="clear"></div>
 				</div>
