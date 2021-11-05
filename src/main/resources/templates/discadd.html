@@ -24,7 +24,7 @@
 		<div class="flex-item form-container">
 			<div>
 				<h1>Add disc</h1>
-				<form id="add" th:object="${disc}" th:action="@{/save}" action="#" method="post">
+				<form id="add" th:object="${disc}" th:action="@{/discs/save}" action="#" method="post">
 				
 					<div class="form-group form-flex">
 						<label hidden="hidden" for="id">Id</label>
@@ -36,7 +36,7 @@
 						<div class="clear-width"></div>
 						<span>
 							<label for="plastic">Plastic</label>
-							<input class="form-control" type="text" id="plastic" placeholder="What plastic" th:field="${disc.plastic}" required />
+							<input class="form-control" type="text" id="plastic" placeholder="What plastic" th:field="${plastic.name}" required />
 						</span>
 					</div>
 					<div class="form-group form-flex">	

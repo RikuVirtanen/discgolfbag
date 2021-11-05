@@ -1,6 +1,5 @@
 package hh.swd20.discgolfbag.domain;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -24,7 +23,11 @@ public class Disc {
 	private int glide;
 	private int turn;
 	private int fade;
-	private String plastic;
+	
+	@ManyToOne
+	@JsonIgnoreProperties("discs")
+	@JoinColumn(name = "plasticId")
+	private Plastic plastic;
 	
 	@ManyToOne
 	@JsonIgnoreProperties("discs")
@@ -38,7 +41,6 @@ public class Disc {
 	
 	@ManyToMany
 	@JsonIgnoreProperties("discs")
-	@JoinColumn(name = "bagId")
 	private List<DGBag> bags;
 
 	public Disc() {
@@ -51,10 +53,9 @@ public class Disc {
 		this.plastic = null;
 		this.category = null;
 		this.company = null;
-		this.bags = new ArrayList<DGBag>();
 	}
 	
-	public Disc(String name, int speed, int glide, int turn, int fade, String plastic, Category category,
+	public Disc(String name, int speed, int glide, int turn, int fade, Plastic plastic, Category category,
 			Company company) {
 		super();
 		this.name = name;
@@ -65,7 +66,6 @@ public class Disc {
 		this.plastic = plastic;
 		this.category = category;
 		this.company = company;
-		this.bags = new ArrayList<DGBag>();
 	}
 
 	public Long getId() {
@@ -116,11 +116,11 @@ public class Disc {
 		this.fade = fade;
 	}
 
-	public String getPlastic() {
+	public Plastic getPlastic() {
 		return plastic;
 	}
 
-	public void setPlastic(String plastic) {
+	public void setPlastic(Plastic plastic) {
 		this.plastic = plastic;
 	}
 
@@ -158,7 +158,7 @@ public class Disc {
 		for (String w: words) {
 			String first = w.substring(0, 1);
 			String rest = w.substring(1);
-			outcome += first.toUpperCase() + rest + " ";
+			outcome += first.toUpperCase() + rest.toLowerCase() + " ";
 		}
 		
 		return outcome.trim();

@@ -15,10 +15,13 @@ public interface DiscRepository extends CrudRepository<Disc, Long> {
 	
 	@RestResource public Iterable<Disc> findByCompany(@Param("company") String company);
 	
+	@RestResource public Iterable<Disc> findByCategory(@Param("category") String category);
+	
+	// @RestResource public Iterable<Disc> findByBag(@Param("bag") String bag);
+	
 	@Query(value="select * "
 			+ "from Disc d "
-			+ "where d.name like %:keyword% "
-			+ "or d.plastic like %:keyword% ", 
+			+ "where d.name like %:keyword% ", 
 			nativeQuery=true)
 	public Iterable<Disc> findByKeyword(@Param("keyword") String keyword);
 }

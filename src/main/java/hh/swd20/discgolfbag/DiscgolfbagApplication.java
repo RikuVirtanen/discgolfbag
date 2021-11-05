@@ -15,6 +15,8 @@ import hh.swd20.discgolfbag.domain.DGBag;
 import hh.swd20.discgolfbag.domain.DGBagRepository;
 import hh.swd20.discgolfbag.domain.Disc;
 import hh.swd20.discgolfbag.domain.DiscRepository;
+import hh.swd20.discgolfbag.domain.Plastic;
+import hh.swd20.discgolfbag.domain.PlasticRepository;
 import hh.swd20.discgolfbag.domain.User;
 import hh.swd20.discgolfbag.domain.UserRepository;
 
@@ -27,10 +29,30 @@ public class DiscgolfbagApplication {
 	}
 	
 	@Bean
-	public CommandLineRunner discgolfbagApp(DiscRepository dr, CategoryRepository catr, CompanyRepository comr, UserRepository ur, DGBagRepository DGBr) {
+	public CommandLineRunner discgolfbagApp(DiscRepository dr,PlasticRepository pr, CategoryRepository catr, CompanyRepository comr, UserRepository ur, DGBagRepository DGBr) {
 		
 		return (args) -> {
 			log.info("insert example data to database");
+			
+			comr.save(new Company("Innova"));
+			comr.save(new Company("Discmania"));
+			comr.save(new Company("Westside"));
+			comr.save(new Company("Latitude 64"));
+			
+			log.info("fetch all companies");
+			for(Company company: comr.findAll()) {
+				log.info(company.toString());
+			}
+			
+			pr.save(new Plastic("Star", comr.findByName("Innova").get()));
+			pr.save(new Plastic("D-Line", comr.findByName("Discmania").get()));
+			pr.save(new Plastic("BT Soft", comr.findByName("Westside").get()));
+			pr.save(new Plastic("Opto", comr.findByName("Latitude 64").get()));
+			
+			log.info("fetch all types of plastic");
+			for(Category category: catr.findAll()) {
+				log.info(category.toString());
+			}
 			
 			catr.save(new Category("Driver"));
 			catr.save(new Category("Fairway Driver"));
@@ -42,20 +64,10 @@ public class DiscgolfbagApplication {
 				log.info(category.toString());
 			}
 			
-			comr.save(new Company("Innova"));
-			comr.save(new Company("Discmania Evolution"));
-			comr.save(new Company("Westside"));
-			comr.save(new Company("Latitude 64"));
-			
-			log.info("fetch all companies");
-			for(Company company: comr.findAll()) {
-				log.info(company.toString());
-			}
-			
-			dr.save(new Disc("Tern", 12, 6, -2, 2, "Champion", catr.findByName("Driver").get(), comr.findByName("Innova").get()));
-			dr.save(new Disc("River", 7, 7, -1, 1, "Opto", catr.findByName("Fairway Driver").get(), comr.findByName("Latitude 64").get()));
-			dr.save(new Disc("Method", 5, 5, 0, 3, "Hard Exo", catr.findByName("Midrange").get(), comr.findByName("Discmania Evolution").get()));
-			dr.save(new Disc("Faith", 2, 3, 0, 1, "Sense", catr.findByName("Putter").get(), comr.findByName("Latitude 64").get()));
+			dr.save(new Disc("Tern", 12, 6, -2, 2, pr.findByName("Star").get(), catr.findByName("Driver").get(), comr.findByName("Innova").get()));
+			dr.save(new Disc("River", 7, 7, -1, 1, pr.findByName("Opto").get(), catr.findByName("Fairway Driver").get(), comr.findByName("Latitude 64").get()));
+			dr.save(new Disc("Method", 5, 5, 0, 3, pr.findByName("D-Line").get(), catr.findByName("Midrange").get(), comr.findByName("Discmania").get()));
+			dr.save(new Disc("Faith", 2, 3, 0, 1, pr.findByName("Opto").get(), catr.findByName("Putter").get(), comr.findByName("Latitude 64").get()));
 			
 			log.info("fetch all discs");
 			for(Disc disc: dr.findAll()) {
@@ -63,21 +75,22 @@ public class DiscgolfbagApplication {
 			}
 			
 			// create users: admin/admin user/user
-			ur.save(new User("user", "user@user.com", "$2a$10$7fDUJhaHcW..lozviLnwbuOw6G8VK/tHq4ew/Vo5J47LEX/SUv/KS", "USER"));
-			ur.save(new User("admin", "admin@admin.com", "$2a$10$FfqOrHQA9ACQQCVIM7wSNeQqfMN/Seix1zVjWgQWPSbiI4qL7dFo6", "ADMIN"));
+			User user = new User("user", "user@user.com", "$2a$10$7fDUJhaHcW..lozviLnwbuOw6G8VK/tHq4ew/Vo5J47LEX/SUv/KS", "USER");
+			User admin = new User("admin", "admin@admin.com", "$2a$10$FfqOrHQA9ACQQCVIM7wSNeQqfMN/Seix1zVjWgQWPSbiI4qL7dFo6", "ADMIN");
 			
-			log.info("fetch all users");
-			for(User user: ur.findAll()) {
-				log.info(user.toString());
-			}
+			ur.save(user);
+			ur.save(admin);
 			
-			DGBr.save(new DGBag("user's bag", "Blue", ur.findByUsername("user").get()));
-			DGBr.save(new DGBag("admin's bag", "Red", ur.findByUsername("admin").get()));
+			DGBr.save(new DGBag("user's bag", "Blue", user));
+			DGBr.save(new DGBag("admin's bag", "Red", admin));
 			
 			log.info("fetch all DGBags");
 			for(DGBag bag: DGBr.findAll()) {
 				log.info(bag.toString());
 			}
+			
+			
+			
 		};
 	}
 }

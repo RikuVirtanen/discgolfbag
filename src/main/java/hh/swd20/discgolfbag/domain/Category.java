@@ -30,12 +30,6 @@ public class Category {
 		this.name = name;
 	}
 
-	public Category(String name, List<Disc> discs) {
-		super();
-		this.name = name;
-		this.discs = discs;
-	}
-
 	public Long getId() {
 		return id;
 	}
@@ -66,7 +60,7 @@ public class Category {
 		for (String w: words) {
 			String first = w.substring(0, 1);
 			String rest = w.substring(1);
-			outcome += first.toUpperCase() + rest + " ";
+			outcome += first.toUpperCase() + rest.toLowerCase() + " ";
 		}
 		
 		return outcome.trim();

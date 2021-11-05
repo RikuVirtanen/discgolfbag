@@ -34,50 +34,57 @@
 					</div>
 					
 					<div class="form-group">
+						<label for="company">Company</label>
+						<select class="form-control" id="company" th:field="*{company}" style="max-width: 150px">
+							<option th:each="company: ${companies}" th:value="${company.id}" th:text="${company.name}"></option>
+						</select>
+					</div>
+					
+					<div class="form-group">
 						<label for="name">Name</label>
 						<input class="form-control" type="text" id="name" th:field="${disc.name}" />
 					</div>
 					
 					<div class="form-group">
 						<label for="plastic">Plastic</label>
-						<input class="form-control" type="text" id="plastic" th:field="${disc.plastic}" />
+						<input class="form-control" type="text" id="plastic" th:field="${plastic.name}" />
 					</div>
 					
 					<div class="form-group">
-						<label hidden="hidden" for="speed">Id</label>
+						<label for="company">Plastic</label>
+						<select class="form-control" id="plastic" th:field="*{plastic}" style="max-width: 150px">
+							<option value=" "></option>
+							<option th:each="plastic: ${plastics}" th:if="plastic.company.id == company.id" th:value="${plastic.id}" th:text="${plastic.name}"></option>
+						</select>
+					</div>
+					
+					<div class="form-group">
+						<label hidden="hidden" for="speed">Speed</label>
 						<input class="form-control" type="hidden" id="speed" th:field="${disc.speed}" />
 					</div>
 					
 					<div class="form-group">
-						<label hidden="hidden" for="glide">Id</label>
+						<label hidden="hidden" for="glide">Glide</label>
 						<input class="form-control" type="hidden" id="glide" th:field="${disc.glide}" />
 					</div>
 					
 					<div class="form-group">
-						<label hidden="hidden" for="turn">Id</label>
+						<label hidden="hidden" for="turn">Turn</label>
 						<input class="form-control" type="hidden" id="turn" th:field="${disc.turn}" />
 					</div>
 					
 					<div class="form-group">
-						<label hidden="hidden" for="fade">Id</label>
+						<label hidden="hidden" for="fade">Fade</label>
 						<input class="form-control" type="hidden" id="fade" th:field="${disc.fade}" />
 					</div>
 					
 					<div class="form-group">
 						<label for="category">Type</label>
 						<select class="form-control" id="category" th:field="*{category}" style="max-width: 150px">
-							<option value=" "></option>
 							<option th:each="category: ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
 						</select>
 					</div>
 					
-					<div class="form-group">
-						<label for="company">Company</label>
-						<select class="form-control" id="company" th:field="*{company}" style="max-width: 150px">
-							<option value=" "></option>
-							<option th:each="company: ${companies}" th:value="${company.id}" th:text="${company.name}"></option>
-						</select>
-					</div>
 					<button class="btn btn-secondary" type="submit">Save</button>
 					<button class="btn" type="reset">Reset</button>
 				</form>

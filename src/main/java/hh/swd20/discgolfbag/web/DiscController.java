@@ -21,6 +21,7 @@ import hh.swd20.discgolfbag.services.CategoryService;
 import hh.swd20.discgolfbag.services.CompanyService;
 import hh.swd20.discgolfbag.services.DGBagService;
 import hh.swd20.discgolfbag.services.DiscService;
+import hh.swd20.discgolfbag.services.PlasticService;
 import hh.swd20.discgolfbag.services.UserService;
 
 @CrossOrigin
@@ -31,11 +32,11 @@ public class DiscController {
 	
 	@Autowired private UserService userService;
 	
-	@Autowired 
-	private CategoryService categoryService;
+	@Autowired private PlasticService plasticService;
 	
-	@Autowired 
-	private CompanyService companyService;
+	@Autowired private CategoryService categoryService;
+	
+	@Autowired private CompanyService companyService;
 	
 	@Autowired
 	private DGBagService bagService;
@@ -79,13 +80,17 @@ public class DiscController {
 	@PreAuthorize(value = "hasAuthority('ADMIN')")
 	@RequestMapping(value = "/discs/save", method = RequestMethod.POST)
 	public String saveDisc(@ModelAttribute Disc disc) {
+		// saves new disc with its info
 		disc.setName(disc.capitalize(disc.getName()));
-		disc.setPlastic(disc.capitalize(disc.getPlastic()));
 		disc.setSpeed(disc.getSpeed());
 		disc.setGlide(disc.getGlide());
 		disc.setTurn(disc.getTurn());
 		disc.setFade(disc.getFade());
+		disc.setCategory(disc.getCategory());
+		disc.setCompany(disc.getCompany());
+		disc.setPlastic(disc.getPlastic());
 		discService.save(disc);
+		
 		return "redirect:/discs/storage";
 	}
 	
@@ -95,6 +100,7 @@ public class DiscController {
 		model.addAttribute("disc", new Disc());
 		model.addAttribute("categories", categoryService.getAll());
 		model.addAttribute("companies", companyService.getAll());
+		model.addAttribute("plastics", plasticService.getAll());
 		return "discadd";
 	}
 	

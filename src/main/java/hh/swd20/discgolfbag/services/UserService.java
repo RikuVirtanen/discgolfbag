@@ -9,8 +9,7 @@ import org.springframework.stereotype.Service;
 import hh.swd20.discgolfbag.domain.User;
 import hh.swd20.discgolfbag.domain.UserRepository;
 
-@Service
-public class UserService {
+@Service public class UserService {
 	
 	@Autowired private UserRepository repository;
 	

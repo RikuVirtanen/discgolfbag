@@ -8,8 +8,7 @@ import org.springframework.stereotype.Service;
 import hh.swd20.discgolfbag.domain.DGBag;
 import hh.swd20.discgolfbag.domain.DGBagRepository;
 
-@Service
-public class DGBagService {
+@Service public class DGBagService {
 	
 	@Autowired private DGBagRepository repository;
 	
@@ -19,6 +18,10 @@ public class DGBagService {
 	
 	public DGBag getById(Long id) {
 		return repository.findById(id).get();
+	}
+	
+	public DGBag getByName(String name) {
+		return repository.findByName(name).get();
 	}
 	
 	public DGBag getDGBagByUserId(Long userId) {

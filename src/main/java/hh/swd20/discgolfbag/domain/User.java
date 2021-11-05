@@ -5,6 +5,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 public class User {
@@ -25,6 +28,10 @@ public class User {
 	
 	@Column(name = "role", nullable = false)
 	private String role;
+	
+	@OneToOne
+	@JsonIgnoreProperties("user")
+	private DGBag bag;
 
 	public User() {
 		super();
@@ -32,14 +39,16 @@ public class User {
 		this.email = null;
 		this.passwordHash = null;
 		this.role = null;
+		this.bag = null;
 	}
-
+	
 	public User(String username, String email, String passwordHash, String role) {
 		super();
 		this.username = username;
 		this.email = email;
 		this.passwordHash = passwordHash;
 		this.role = role;
+		this.bag = null;
 	}
 
 	public Long getId() {
@@ -80,6 +89,14 @@ public class User {
 
 	public void setRole(String role) {
 		this.role = role;
+	}
+
+	public DGBag getBag() {
+		return bag;
+	}
+
+	public void setBag(DGBag bag) {
+		this.bag = bag;
 	}
 
 	@Override

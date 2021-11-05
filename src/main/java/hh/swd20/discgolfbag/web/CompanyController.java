@@ -26,54 +26,56 @@ public class CompanyController {
 	
 	/******************************** RESTFUL SERVICES *****************************************/
 	
-	@RequestMapping(value = "/companies", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/companies", method = RequestMethod.GET)
 	public @ResponseBody List<Company> getCompaniesRest() {
 		return companyService.getAll();
 	}
 	
-	@RequestMapping(value = "/companies/{id}", method=RequestMethod.GET)
-	public @ResponseBody Company findCompanyRest(@PathVariable("id") Long companyId) {
+	@RequestMapping(value = "/api/companies/{id}", method=RequestMethod.GET)
+	public @ResponseBody Company getCompanyByIdRest(@PathVariable("id") Long companyId) {
 		return companyService.getById(companyId);
 	}
 	
-	@RequestMapping(value = "/companies", method = RequestMethod.POST)
+	@RequestMapping(value = "/api/companies", method = RequestMethod.POST)
 	public @ResponseBody void saveCompanyRest(@RequestBody Company company) {
 		companyService.save(company);
 	}
 	
 	/********************************************************************************************/
 	
-	@RequestMapping(value="/companylist", method=RequestMethod.GET)
+	@RequestMapping(value="/companies", method=RequestMethod.GET)
 	public String listCompanies(Model model) {
 		model.addAttribute("companies", companyService.getAll());
-		return "companylist";
+		return "companylist"; //thymeleaf template
 	}
 	
-	@RequestMapping(value="/addcompany", method=RequestMethod.GET)
+	@RequestMapping(value="/companies/addcompany", method=RequestMethod.GET)
 	public String addCompany(Model model) {
 		model.addAttribute("company", new Company());
-		return "addcompany";
+		return "addcompany"; //thymeleaf template
 	}
 	
-	@RequestMapping(value="/savecompany", method=RequestMethod.POST)
+	@RequestMapping(value="/companies/savecompany", method=RequestMethod.POST)
 	public String saveCompany(@ModelAttribute Company company) {
 		if(companyService.getByName(company.capitalize(company.getName())) != null) {
-			return "redirect:/companylist";
+			return "redirect:/companies";
 		}
 		company.setName(company.capitalize(company.getName()));
 		companyService.save(company);
-		return "redirect:/companylist";
+		return "redirect:/companies";
 	}
+	
 	@PreAuthorize(value="hasAuthority('ADMIN')")
-	@RequestMapping(value="/editcompany/{id}", method=RequestMethod.GET)
+	@RequestMapping(value="/companies/editcompany/{id}", method=RequestMethod.GET)
 	public String editCompany(@PathVariable("id") Long companyId, Model model) {
 		model.addAttribute("company", companyService.getById(companyId));
-		return "/editcompany";
+		return "editcompany"; //thymeleaf template
 	}
+	
 	@PreAuthorize(value="hasAuthority('ADMIN')")
-	@RequestMapping(value="/deletecompany/{id}", method=RequestMethod.GET)
+	@RequestMapping(value="/companies/deletecompany/{id}", method=RequestMethod.GET)
 	public String deleteCompany(@PathVariable("id") Long companyId) {
 		companyService.delete(companyService.getById(companyId));
-		return "redirect:../companylist";
+		return "redirect:../companies";
 	}
 }

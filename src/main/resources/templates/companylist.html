@@ -10,20 +10,33 @@
 <link type="text/css" rel="stylesheet" href="/css/styles.css" th:href="@{/css/styles.css}" /> 
 <script src="https://kit.fontawesome.com/17a4ce7e95.js" crossorigin="anonymous"></script>
 <script type="text/javascript" th:src="@{/js/script.js}" defer></script>
-<title th:text="${user.username}"></title>
+<title>Storage</title>
 </head>
 <body>
 	<header>
 		<div class="nav" th:replace="fragments/topnav :: navbar"></div>
 	</header>
 	<div class="d-flex justify-content-between container">
+		
 		<div class="flex-item">
 			<div class="side-container"></div>
 		</div>
+		
 		<div class="flex-item table-container">
-			<h1 th:text="${user.username} + '\'s virtual discgolf bag'"></h1>
-			<p th:if="${me.username} == ${user.username}" >Here is your disc selection.</p>
+			<h1>Companies</h1>
+			<p>Here you can find all companies.</p>
+			
+			<div class="add-btn" sec:authorize="hasAuthority('ADMIN')">
+				<a class="btn btn-success" th:href="@{/companies/addcompany}" >Add</a>
+			</div>
+			
+			<form class="form-inline form" action="#" th:action="@{/companies}" method="GET">
+				<input class="form-control mr-sm-2" type="search" placeholder="Search discs" aria-label="Search" name="keyword" id="txtSearch" />
+				<button class="btn btn-outline-succes my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
+			</form>
+			
 			<table class="table table-dark table-striped table-hover list">
+				
 				<tr>
 					<th></th>
 					<th>TYPE</th>
@@ -40,15 +53,16 @@
 					<th></th>
 					<th>COMPANY</th>
 					<th></th>
-					<th th:if="${me.username} == ${user.username}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')"></th>
-					<th th:if="${me.username} != ${user.username} and ${bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')"></th>
-					<th th:if="${me.username} != ${user.username} and ${!bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')"></th>
-				</tr>
+					<th th:if="${bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')"></th>
+					<th sec:authorize="hasAuthority('ADMIN')"></th>
+					<th sec:authorize="hasAuthority('ADMIN')"></th>
+				</tr>	
+							
 				<tr th:each = "disc : ${discs}">
 					<td></td>
 					<td th:text="${disc?.category?.name}"></td>
 					<td></td>
-					<td th:text="${disc?.plastic?.name}"></td>
+					<td th:text="${disc.plastic}"></td>
 					<td></td>
 					<td th:text="${disc.name}"></td>
 					<td></td>
@@ -56,18 +70,27 @@
 					<td></td>
 					<td th:text="${disc?.company?.name}"></td>
 					<td></td>
-					<td th:if="${me.username} == ${user.username}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
-						<a class="btn btn-warning" th:href="@{/bags/remove/{id}(id=${disc.id})}" >Remove</a>
+					<td th:if="${!bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
+						<a class="btn btn-success" th:href="@{/discs/storage/add/{id}(id=${disc.id})}" >Add</a>
 					</td>
-					<td th:if="${me.username} != ${user.username} and ${!bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
-						<a class="btn btn-success" th:href="@{/users/{userid}/add/{discid}(userid=${user.id}, discid=${disc.id})}" >Add</a>
+					<td sec:authorize="hasAuthority('ADMIN')">
+						<a class="btn btn-success" th:href="@{/discs/storage/editdisc/{id}(id=${disc.id})}" >Edit</a>
 					</td>
-					<td th:if="${me.username} != ${user.username} and ${bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
+					<td sec:authorize="hasAuthority('ADMIN')">
+						<a 
+							class="btn btn-danger" 
+							th:href="@{/discs/storage/deletedisc/{id}(id=${disc.id})}" 
+							onclick="return confirm('Are you sure you wish to delete')" >
+								Delete
+						</a>
 					</td>
 					
 				</tr>
+				
 			</table>
+			
 		</div>
+
 		<div class="flex-item">
 			<div class="side-container"></div>
 		</div>

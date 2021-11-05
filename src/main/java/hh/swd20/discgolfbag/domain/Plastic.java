@@ -7,34 +7,39 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-public class Company {
-	
+public class Plastic {
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	private Long id;
+	private Long id;	
 	private String name;
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "company" )
-	@JsonIgnoreProperties("company")
+	@ManyToOne
+	@JsonIgnoreProperties("plastics")
+	@JoinColumn(name = "companyId")
+	private Company company;
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "plastic")
+	@JsonIgnoreProperties("plastic")
 	private List<Disc> discs;
-	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "company" )
-	@JsonIgnoreProperties("company")
-	private List<Plastic> plastics;
-	
-	public Company() {
+
+	public Plastic() {
 		super();
 		this.name = null;
+		this.company = null;
 	}
-	
-	public Company(String name) {
+
+	public Plastic(String name, Company company) {
 		super();
 		this.name = name;
+		this.company = company;
 	}
 
 	public Long getId() {
@@ -51,6 +56,14 @@ public class Company {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Company getCompany() {
+		return company;
+	}
+
+	public void setCompany(Company company) {
+		this.company = company;
 	}
 
 	public List<Disc> getDiscs() {
@@ -75,7 +88,6 @@ public class Company {
 
 	@Override
 	public String toString() {
-		return "Company [id=" + id + ", name=" + capitalize(this.name) + "]";
+		return "Plastic [id=" + id + ", name=" + name + ", company=" + company + "]";
 	}
-	
 }

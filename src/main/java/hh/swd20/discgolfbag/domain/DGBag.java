@@ -1,6 +1,5 @@
 package hh.swd20.discgolfbag.domain;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -11,28 +10,30 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 public class DGBag {
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	private String name;
 	private String color;
 	
 	@OneToOne
+	@JsonIgnoreProperties("bag")
 	@JoinColumn(name = "userId")
 	private User user;
 	
 	@ManyToMany
-	@JoinColumn(name = "discId")
+	@JsonIgnoreProperties("bags")
 	private List<Disc> discs;
 	
 	public DGBag() {
 		super();
 		this.name = null;
 		this.color = null;
-		this.discs = new ArrayList<>();
 	}
 	
 	public DGBag(String name, String color, User user) {
@@ -40,15 +41,6 @@ public class DGBag {
 		this.name = name;
 		this.color = color;
 		this.user = user;
-		this.discs = new ArrayList<>();
-	}
-	
-	public DGBag(String name, String color, User user, List<Disc> discs) {
-		super();
-		this.name = name;
-		this.color = color;
-		this.user = user;
-		this.discs = discs;
 	}
 
 	public Long getId() {
@@ -113,7 +105,7 @@ public class DGBag {
 
 	@Override
 	public String toString() {
-		return "DGBag [id=" + id + ", name=" + name + ", color=" + color + ", user=" + user.getUsername() + "]";
+		return "DGBag [id=" + id + ", name=" + name + ", color=" + color + "]";
 	}
 	
 }

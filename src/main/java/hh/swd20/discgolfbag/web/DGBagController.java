@@ -30,12 +30,12 @@ public class DGBagController {
 	
 	/************************* RESTFUL SERVICES ****************************/
 	
-	@RequestMapping(value="/api/bags", method = RequestMethod.GET)
+	@RequestMapping(value="/api/dGBags", method = RequestMethod.GET)
 	public @ResponseBody List<DGBag> getDGBagsRest() {
 		return bagService.getAll();
 	}
 	
-	@RequestMapping(value="/api/bags/{id}", method = RequestMethod.GET)
+	@RequestMapping(value="/api/dGBags/{id}", method = RequestMethod.GET)
 	public @ResponseBody DGBag findDGBagRest(@PathVariable("id") Long bagId) {
 		return bagService.getById(bagId);
 	}
