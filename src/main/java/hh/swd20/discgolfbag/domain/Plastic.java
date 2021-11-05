@@ -7,10 +7,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
@@ -22,12 +22,13 @@ public class Plastic {
 	private String name;
 	
 	@ManyToOne
-	@JsonIgnoreProperties("plastics")
-	@JoinColumn(name = "companyId")
+	@JsonIgnore
+	//@JsonIgnoreProperties({"discs", "plastics"})
+	//@JoinColumn(name = "companyid", referencedColumnName = "id")
 	private Company company;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "plastic")
-	@JsonIgnoreProperties("plastic")
+	@JsonIgnoreProperties({"plastic", "discs"})
 	private List<Disc> discs;
 
 	public Plastic() {
@@ -88,6 +89,6 @@ public class Plastic {
 
 	@Override
 	public String toString() {
-		return "Plastic [id=" + id + ", name=" + name + ", company=" + company + "]";
+		return "Plastic [id=" + id + ", name=" + name + "]";
 	}
 }

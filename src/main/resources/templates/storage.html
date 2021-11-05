@@ -67,7 +67,7 @@
 					<td></td>
 					<td th:text="${disc.name}"></td>
 					<td></td>
-					<td th:text="${disc.speed} + ' | ' + ${disc.glide} + ' | ' + ${disc.turn} + ' | ' + ${disc.fade}"></td>
+					<td th:text="${disc?.attributes?.speed} + ' | ' + ${disc?.attributes?.glide} + ' | ' + ${disc?.attributes?.turn} + ' | ' + ${disc?.attributes?.fade}"></td>
 					<td></td>
 					<td th:text="${disc?.company?.name}"></td>
 					<td></td>

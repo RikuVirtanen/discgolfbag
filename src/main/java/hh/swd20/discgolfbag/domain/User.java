@@ -1,10 +1,12 @@
 package hh.swd20.discgolfbag.domain;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -29,9 +31,10 @@ public class User {
 	@Column(name = "role", nullable = false)
 	private String role;
 	
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JsonIgnoreProperties("user")
-	private DGBag bag;
+	@JoinColumn(name = "bagId", referencedColumnName = "id")
+	private Bag bag;
 
 	public User() {
 		super();
@@ -39,7 +42,7 @@ public class User {
 		this.email = null;
 		this.passwordHash = null;
 		this.role = null;
-		this.bag = null;
+		this.bag = new Bag(username + "'s bag", "default", this);
 	}
 	
 	public User(String username, String email, String passwordHash, String role) {
@@ -48,7 +51,7 @@ public class User {
 		this.email = email;
 		this.passwordHash = passwordHash;
 		this.role = role;
-		this.bag = null;
+		this.bag = new Bag(username + "'s bag", "default", this);
 	}
 
 	public Long getId() {
@@ -91,11 +94,11 @@ public class User {
 		this.role = role;
 	}
 
-	public DGBag getBag() {
+	public Bag getBag() {
 		return bag;
 	}
 
-	public void setBag(DGBag bag) {
+	public void setBag(Bag bag) {
 		this.bag = bag;
 	}
 

@@ -20,12 +20,12 @@ public class Company {
 	private String name;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "company" )
-	@JsonIgnoreProperties("company")
-	private List<Disc> discs;
+	@JsonIgnoreProperties({"company", "discs"})
+	private List<Plastic> plastics;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "company" )
-	@JsonIgnoreProperties("company")
-	private List<Plastic> plastics;
+	@JsonIgnoreProperties({"company", "discs"})
+	private List<Disc> discs;
 	
 	public Company() {
 		super();
@@ -51,6 +51,14 @@ public class Company {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public List<Plastic> getPlastics() {
+		return plastics;
+	}
+
+	public void setPlastics(List<Plastic> plastics) {
+		this.plastics = plastics;
 	}
 
 	public List<Disc> getDiscs() {

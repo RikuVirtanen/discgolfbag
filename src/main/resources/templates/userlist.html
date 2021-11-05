@@ -28,7 +28,7 @@
 				<div class="add-btn" sec:authorize="hasAuthority('ADMIN')">
 					<a class="btn btn-success" th:href="@{/users/adduser}" >Add</a>
 				</div>
-				<form class="form-inline form" action="#" th:action="@{/users}" method="get">
+				<form class="form-inline search-bar" action="#" th:action="@{/users}" method="get">
 					<input class="form-control mr-sm-2" type="search" placeholder="Search users" aria-label="Search" name="keyword" id="txtSearch"/>
 					<button class="btn btn-outline-succes my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
 				</form>

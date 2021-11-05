@@ -2,18 +2,18 @@ package hh.swd20.discgolfbag.domain;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-public class DGBag {
+public class Bag {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -21,22 +21,21 @@ public class DGBag {
 	private String name;
 	private String color;
 	
-	@OneToOne
+	@OneToOne(mappedBy = "bag")
 	@JsonIgnoreProperties("bag")
-	@JoinColumn(name = "userId")
 	private User user;
 	
-	@ManyToMany
+	@ManyToMany(targetEntity = Disc.class, mappedBy="bags", cascade = CascadeType.ALL)
 	@JsonIgnoreProperties("bags")
 	private List<Disc> discs;
 	
-	public DGBag() {
+	public Bag() {
 		super();
 		this.name = null;
 		this.color = null;
 	}
 	
-	public DGBag(String name, String color, User user) {
+	public Bag(String name, String color, User user) {
 		super();
 		this.name = name;
 		this.color = color;

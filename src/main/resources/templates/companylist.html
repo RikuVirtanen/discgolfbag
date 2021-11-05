@@ -16,6 +16,7 @@
 	<header>
 		<div class="nav" th:replace="fragments/topnav :: navbar"></div>
 	</header>
+	
 	<div class="d-flex justify-content-between container">
 		
 		<div class="flex-item">
@@ -26,11 +27,12 @@
 			<h1>Companies</h1>
 			<p>Here you can find all companies.</p>
 			
-			<div class="add-btn" sec:authorize="hasAuthority('ADMIN')">
-				<a class="btn btn-success" th:href="@{/companies/addcompany}" >Add</a>
-			</div>
+			<form class="form-inline add-form" th:action="@{/companies/save}" action="#" method="post" sec:authorize="hasAuthority('ADMIN')">
+				<input class="form-control mr-sm-2" type="text" id="name" placeholder="Name new company" th:field="${company.name}" />
+				<button class="btn btn-success" type="submit" >Add</button>
+			</form>
 			
-			<form class="form-inline form" action="#" th:action="@{/companies}" method="GET">
+			<form class="form-inline search-bar" action="#" th:action="@{/companies}" method="GET">
 				<input class="form-control mr-sm-2" type="search" placeholder="Search discs" aria-label="Search" name="keyword" id="txtSearch" />
 				<button class="btn btn-outline-succes my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
 			</form>
@@ -39,47 +41,42 @@
 				
 				<tr>
 					<th></th>
-					<th>TYPE</th>
-					<th></th>
-					<th>PLASTIC</th>
-					<th></th>
 					<th>NAME</th>
 					<th></th>
-					<th>
-						ATTRIBUTES
-						<br>
-						S | G | T | F
-					</th>
 					<th></th>
-					<th>COMPANY</th>
 					<th></th>
-					<th th:if="${bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')"></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
+					<th></th>
 					<th sec:authorize="hasAuthority('ADMIN')"></th>
 					<th sec:authorize="hasAuthority('ADMIN')"></th>
 				</tr>	
 							
-				<tr th:each = "disc : ${discs}">
+				<tr th:each = "company : ${companies}">
 					<td></td>
-					<td th:text="${disc?.category?.name}"></td>
+					<th><a class="link" th:href="@{/companies/company/{id}(id=${company.id})}" th:text="${company.name}"></a></th>
 					<td></td>
-					<td th:text="${disc.plastic}"></td>
 					<td></td>
-					<td th:text="${disc.name}"></td>
 					<td></td>
-					<td th:text="${disc.speed} + ' | ' + ${disc.glide} + ' | ' + ${disc.turn} + ' | ' + ${disc.fade}"></td>
 					<td></td>
-					<td th:text="${disc?.company?.name}"></td>
 					<td></td>
-					<td th:if="${!bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
-						<a class="btn btn-success" th:href="@{/discs/storage/add/{id}(id=${disc.id})}" >Add</a>
-					</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+
 					<td sec:authorize="hasAuthority('ADMIN')">
-						<a class="btn btn-success" th:href="@{/discs/storage/editdisc/{id}(id=${disc.id})}" >Edit</a>
+						<a class="btn btn-success" th:href="@{/companies/edit/{id}(id=${company.id})}">Edit</a>
 					</td>
 					<td sec:authorize="hasAuthority('ADMIN')">
 						<a 
 							class="btn btn-danger" 
-							th:href="@{/discs/storage/deletedisc/{id}(id=${disc.id})}" 
+							th:href="@{/companies/delete/{id}(id=${company.id})}" 
 							onclick="return confirm('Are you sure you wish to delete')" >
 								Delete
 						</a>
@@ -95,5 +92,6 @@
 			<div class="side-container"></div>
 		</div>
 	</div>
+	
 </body>
 </html>

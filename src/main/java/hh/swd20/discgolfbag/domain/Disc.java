@@ -2,6 +2,7 @@ package hh.swd20.discgolfbag.domain;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -9,7 +10,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
@@ -19,50 +22,58 @@ public class Disc {
 	private Long id; 
 	
 	private String name;
-	private int speed;
-	private int glide;
-	private int turn;
-	private int fade;
+	
+	@OneToOne(cascade = CascadeType.ALL)
+	@JsonIgnore
+	@JoinColumn(name = "attributesid", referencedColumnName = "id")
+	private Attributes attributes;
 	
 	@ManyToOne
+	//@JsonIgnore
 	@JsonIgnoreProperties("discs")
-	@JoinColumn(name = "plasticId")
+	@JoinColumn(name = "plasticid", referencedColumnName = "id")
 	private Plastic plastic;
 	
 	@ManyToOne
+	//@JsonIgnore
 	@JsonIgnoreProperties("discs")
-	@JoinColumn(name = "categoryId")
+	@JoinColumn(name = "categoryid", referencedColumnName = "id")
 	private Category category;
 	
 	@ManyToOne
+	//@JsonIgnore
 	@JsonIgnoreProperties("discs")
-	@JoinColumn(name = "companyId")
+	@JoinColumn(name = "companyid", referencedColumnName = "id")
 	private Company company;
 	
-	@ManyToMany
-	@JsonIgnoreProperties("discs")
-	private List<DGBag> bags;
+	@ManyToMany(targetEntity = Bag.class, cascade = CascadeType.ALL)
+	@JsonIgnore
+	private List<Bag> bags;
 
 	public Disc() {
 		super();
 		this.name = null;
-		this.speed = 0;
-		this.glide = 0;
-		this.turn = 0;
-		this.fade = 0;
+		this.attributes = new Attributes(0, 0, 0, 0, this);
 		this.plastic = null;
 		this.category = null;
 		this.company = null;
 	}
 	
-	public Disc(String name, int speed, int glide, int turn, int fade, Plastic plastic, Category category,
+	public Disc(String name, Plastic plastic, Category category, 
 			Company company) {
 		super();
 		this.name = name;
-		this.speed = speed;
-		this.glide = glide;
-		this.turn = turn;
-		this.fade = fade;
+		this.attributes = new Attributes(0, 0, 0, 0, this);
+		this.plastic = plastic;
+		this.category = category;
+		this.company = company;
+	}
+	
+	public Disc(String name, Attributes attributes, Plastic plastic, Category category, 
+			Company company) {
+		super();
+		this.name = name;
+		this.attributes = attributes;
 		this.plastic = plastic;
 		this.category = category;
 		this.company = company;
@@ -84,36 +95,12 @@ public class Disc {
 		this.name = name;
 	}
 
-	public int getSpeed() {
-		return speed;
+	public Attributes getAttributes() {
+		return attributes;
 	}
 
-	public void setSpeed(int speed) {
-		this.speed = speed;
-	}
-
-	public int getGlide() {
-		return glide;
-	}
-
-	public void setGlide(int glide) {
-		this.glide = glide;
-	}
-
-	public int getTurn() {
-		return turn;
-	}
-
-	public void setTurn(int turn) {
-		this.turn = turn;
-	}
-
-	public int getFade() {
-		return fade;
-	}
-
-	public void setFade(int fade) {
-		this.fade = fade;
+	public void setAttributes(Attributes attributes) {
+		this.attributes = attributes;
 	}
 
 	public Plastic getPlastic() {
@@ -140,16 +127,20 @@ public class Disc {
 		this.company = company;
 	}
 	
-	public List<DGBag> getBags() {
+	public List<Bag> getBags() {
 		return bags;
 	}
 	
-	public void setBags(List<DGBag> bags) {
+	public void setBags(List<Bag> bags) {
 		this.bags = bags;
 	}
 	
-	public void addToBag(DGBag bag) {
+	public void addToBag(Bag bag) {
 		this.bags.add(bag);
+	}
+	
+	public void removeFromBag(Bag bag) {
+		this.bags.remove(bag);
 	}
 
 	public String capitalize(String word) {
@@ -166,9 +157,7 @@ public class Disc {
 
 	@Override
 	public String toString() {
-		return "Disc [id=" + id + ", name=" + name + ", speed=" + speed + ", glide=" + glide + ", turn=" + turn
-				+ ", fade=" + fade + ", plastic=" + plastic + ", category=" + capitalize(this.getCategory().getName()) + ", company=" + capitalize(this.company.getName()) + "]";
+		return "Disc [id=" + id + ", name=" + name + ", attributes=" + attributes + ", plastic=" + plastic
+				+ ", category=" + category + ", company=" + company + ", bags=" + bags + "]";
 	}
-	
-	
 }

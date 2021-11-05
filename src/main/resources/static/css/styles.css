@@ -60,18 +60,18 @@ footer {
 	width: 100%;
 }
 
-.form {
+.form-container {
 	justify-content: center;
 	text-align: center;
-}
-
-.form-control {
-	min-width: 15vw;
 }
 
 .form-flex {
 	display: flex;
 	justify-content: center;
+}
+
+.no-input {
+	width: 5vw;
 }
 
 .table {
@@ -207,4 +207,18 @@ footer {
 .search-bar {
 	float: right;
 	padding: 10px;
+}
+
+.add-form {
+	float: left;
+	padding: 10px;
+	padding-left: 0;
+}
+
+.link {
+	color: white;
+}
+
+.span {
+	margin: 10px;
 }

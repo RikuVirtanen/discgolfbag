@@ -1,6 +1,8 @@
 package hh.swd20.discgolfbag.services;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,11 @@ import hh.swd20.discgolfbag.domain.CompanyRepository;
 	
 	public void save(Company company) {
 		repository.save(company);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Map<String, Set<String>> getCompanies() {
+		return (Map<String, Set<String>>) repository.findAll();
 	}
 	
 	public void delete(Company company) {

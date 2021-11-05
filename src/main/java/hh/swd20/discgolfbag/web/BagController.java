@@ -14,29 +14,34 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import hh.swd20.discgolfbag.domain.DGBag;
+import hh.swd20.discgolfbag.domain.Bag;
+import hh.swd20.discgolfbag.domain.BagRepository;
 import hh.swd20.discgolfbag.domain.Disc;
-import hh.swd20.discgolfbag.services.DGBagService;
+import hh.swd20.discgolfbag.domain.DiscRepository;
+import hh.swd20.discgolfbag.services.BagService;
 import hh.swd20.discgolfbag.services.DiscService;
 import hh.swd20.discgolfbag.services.UserService;
 
 @CrossOrigin
 @Controller
-public class DGBagController {
+public class BagController {
+	
+	@Autowired private BagRepository repository;
+	@Autowired private DiscRepository discRepository;
 	
 	@Autowired private UserService userService;
-	@Autowired private DGBagService bagService;
+	@Autowired private BagService bagService;
 	@Autowired private DiscService discService;
 	
 	/************************* RESTFUL SERVICES ****************************/
 	
-	@RequestMapping(value="/api/dGBags", method = RequestMethod.GET)
-	public @ResponseBody List<DGBag> getDGBagsRest() {
+	@RequestMapping(value="/api/bags", method = RequestMethod.GET)
+	public @ResponseBody List<Bag> getDGBagsRest() {
 		return bagService.getAll();
 	}
 	
-	@RequestMapping(value="/api/dGBags/{id}", method = RequestMethod.GET)
-	public @ResponseBody DGBag findDGBagRest(@PathVariable("id") Long bagId) {
+	@RequestMapping(value="/api/bags/{id}", method = RequestMethod.GET)
+	public @ResponseBody Bag findDGBagRest(@PathVariable("id") Long bagId) {
 		return bagService.getById(bagId);
 	}
 	
@@ -48,10 +53,10 @@ public class DGBagController {
 		Long userId = userService.getByUsername(auth.getName()).getId();
 		model.addAttribute("user", userService.getByUsername(auth.getName()));
 		model.addAttribute("me", userService.getByUsername(auth.getName()));
-		List <Disc> discs = bagService.getDGBagByUserId(userId).getDiscs();
+		List <Disc> discs = bagService.getBagByUserId(userId).getDiscs();
 		model.addAttribute("discs", discs);	
 		model.addAttribute("bag", 
-				bagService.getDGBagByUserId(
+				bagService.getBagByUserId(
 						userService.getByUsername(
 								auth.getName()).getId()).getDiscs()
 				);
@@ -61,15 +66,15 @@ public class DGBagController {
 	@PreAuthorize(value = "hasAnyAuthority('USER', 'ADMIN')")
 	@RequestMapping(value = "/bags/findusersbag/{id}", method = RequestMethod.GET)
 	public String findUsersBag(@PathVariable("id") Long userId, Model model, Authentication auth) {
-		if(bagService.getDGBagByUserId(userId) == null) {
+		if(bagService.getBagByUserId(userId) == null) {
 			return "redirect:/users";
 		} else {
-			List <Disc> discs = bagService.getDGBagByUserId(userId).getDiscs();
+			List <Disc> discs = bagService.getBagByUserId(userId).getDiscs();
 			model.addAttribute("discs", discs);
 			model.addAttribute("user", userService.getById(userId));
 			model.addAttribute("me", userService.getByUsername(auth.getName()));
 			model.addAttribute("bag", 
-					bagService.getDGBagByUserId(
+					bagService.getBagByUserId(
 							userService.getByUsername(
 									auth.getName()).getId()).getDiscs()
 					);
@@ -79,7 +84,7 @@ public class DGBagController {
 	
 	@PreAuthorize(value = "hasAuthority('USER')")
 	@RequestMapping(value="/bags/savebag", method = RequestMethod.POST)
-	public String createBag(@ModelAttribute DGBag bag, Authentication auth) {
+	public String createBag(@ModelAttribute Bag bag, Authentication auth) {
 		bag.setUser(userService.getByUsername(auth.getName()));
 		bagService.save(bag);
 		return "redirect:/bags/mybag";
@@ -89,11 +94,12 @@ public class DGBagController {
 	@RequestMapping(value = "/bags/remove/{id}", method = RequestMethod.GET)
 	public String removeDiscFromBag(@PathVariable("id") Long discId, Authentication auth) {
 		Disc disc = discService.getById(discId);
-		discService.save(disc);
 		Long userId = userService.getByUsername(auth.getName()).getId();
-		DGBag bag = bagService.getDGBagByUserId(userId);
+		Bag bag = bagService.getBagByUserId(userId);
 		bag.getDiscs().remove(disc);
-		bagService.save(bag);
+		repository.save(bag);
+		disc.removeFromBag(bag);
+		discRepository.save(disc);
 		return "redirect:/bags/mybag";
 	}
 }

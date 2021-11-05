@@ -15,11 +15,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import hh.swd20.discgolfbag.domain.DGBag;
+import hh.swd20.discgolfbag.domain.Attributes;
+import hh.swd20.discgolfbag.domain.Bag;
 import hh.swd20.discgolfbag.domain.Disc;
+import hh.swd20.discgolfbag.domain.DiscRepository;
+import hh.swd20.discgolfbag.services.BagService;
 import hh.swd20.discgolfbag.services.CategoryService;
 import hh.swd20.discgolfbag.services.CompanyService;
-import hh.swd20.discgolfbag.services.DGBagService;
 import hh.swd20.discgolfbag.services.DiscService;
 import hh.swd20.discgolfbag.services.PlasticService;
 import hh.swd20.discgolfbag.services.UserService;
@@ -28,18 +30,14 @@ import hh.swd20.discgolfbag.services.UserService;
 @Controller
 public class DiscController {
 	
+	@Autowired private DiscRepository repository;
+	
 	@Autowired private DiscService discService;
-	
 	@Autowired private UserService userService;
-	
 	@Autowired private PlasticService plasticService;
-	
 	@Autowired private CategoryService categoryService;
-	
 	@Autowired private CompanyService companyService;
-	
-	@Autowired
-	private DGBagService bagService;
+	@Autowired private BagService bagService;
 	
 	@RequestMapping(value = "/discs/storage", method = RequestMethod.GET)
 	public String storage(Model model, String keyword, Authentication auth) {
@@ -48,15 +46,15 @@ public class DiscController {
 		} else {
 			model.addAttribute("discs", discService.getDiscs());
 		}
-		model.addAttribute("bag", bagService.getDGBagByUserId(userService.getByUsername(auth.getName()).getId()).getDiscs());
+		model.addAttribute("bag", bagService.getBagByUserId(userService.getByUsername(auth.getName()).getId()).getDiscs());
 		return "storage";
 	}
 	
 	/******************RESTFUL SERVICES **************************/
 	
 	@RequestMapping(value = "/api/discs", method = RequestMethod.GET)
-	public @ResponseBody List<Disc> discList() {
-		return discService.getDiscs();
+	public @ResponseBody List<Disc> discListRest() {
+		return (List<Disc>) repository.findAll();
 	}
 	
 	@RequestMapping(value = "/api/discs/{id}", method = RequestMethod.GET)
@@ -82,10 +80,7 @@ public class DiscController {
 	public String saveDisc(@ModelAttribute Disc disc) {
 		// saves new disc with its info
 		disc.setName(disc.capitalize(disc.getName()));
-		disc.setSpeed(disc.getSpeed());
-		disc.setGlide(disc.getGlide());
-		disc.setTurn(disc.getTurn());
-		disc.setFade(disc.getFade());
+		disc.setAttributes(disc.getAttributes());
 		disc.setCategory(disc.getCategory());
 		disc.setCompany(disc.getCompany());
 		disc.setPlastic(disc.getPlastic());
@@ -98,9 +93,11 @@ public class DiscController {
 	@RequestMapping(value = "/discs/storage/addnew", method = RequestMethod.GET)
 	public String addNewDisc(Model model) {
 		model.addAttribute("disc", new Disc());
+		model.addAttribute("attributes", new Attributes());
 		model.addAttribute("categories", categoryService.getAll());
 		model.addAttribute("companies", companyService.getAll());
 		model.addAttribute("plastics", plasticService.getAll());
+		
 		return "discadd";
 	}
 	
@@ -109,7 +106,7 @@ public class DiscController {
 	public String addDiscToBag(@PathVariable("discid") Long discId, Authentication auth) {
 		Disc disc = discService.getById(discId);
 		Long userId = userService.getByUsername(auth.getName()).getId();
-		DGBag bag = bagService.getDGBagByUserId(userId);
+		Bag bag = bagService.getBagByUserId(userId);
 		if (!bag.getDiscs().contains(disc)) {
 			disc.addToBag(bag);
 			discService.save(disc);
@@ -133,8 +130,8 @@ public class DiscController {
 	@RequestMapping(value = "/discs/storage/deletedisc/{id}", method = RequestMethod.GET)
 	public String deleteDisc(@PathVariable("id") Long discId) {
 		Disc disc = discService.getById(discId);
-		List<DGBag> bags = bagService.getAll();
-		for(DGBag b: bags) {
+		List<Bag> bags = bagService.getAll();
+		for(Bag b: bags) {
 			if (b.getDiscs().contains(disc)) {
 				b.getDiscs().remove(disc);
 				bagService.save(b);

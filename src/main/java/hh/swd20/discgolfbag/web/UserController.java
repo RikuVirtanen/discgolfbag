@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import hh.swd20.discgolfbag.domain.DGBag;
+import hh.swd20.discgolfbag.domain.Bag;
 import hh.swd20.discgolfbag.domain.Disc;
 import hh.swd20.discgolfbag.domain.SignupForm;
 import hh.swd20.discgolfbag.domain.User;
 import hh.swd20.discgolfbag.domain.UserRepository;
-import hh.swd20.discgolfbag.services.DGBagService;
+import hh.swd20.discgolfbag.services.BagService;
 import hh.swd20.discgolfbag.services.DiscService;
 import hh.swd20.discgolfbag.services.UserService;
 
@@ -31,10 +31,13 @@ import hh.swd20.discgolfbag.services.UserService;
 @Controller
 public class UserController {
 	
-	@Autowired private DGBagService bagService;
+	// REPOSITORIES
+	@Autowired private UserRepository repository;
+	
+	// SERVICES
+	@Autowired private BagService bagService;
 	@Autowired private UserService userService;
 	@Autowired private DiscService discService;
-	
 	@Autowired private UserRepository userRepository;
 	
 	@RequestMapping(value = "/signup", method = RequestMethod.GET)
@@ -45,16 +48,16 @@ public class UserController {
 	
 	/********************* RESTFUL SERVICES *********************************/
 	
-	@RequestMapping(value="/api/users/bag/{id}", method = RequestMethod.GET)
-	public @ResponseBody DGBag findDGBagByUserId(@PathVariable("id") Long userId) {
-		return bagService.getDGBagByUserId(userId);
-	}
-	
 	@RequestMapping(value="/api/users", method = RequestMethod.GET)
 	public @ResponseBody List <User> findUsersRest() {
-		return userService.getAll();
+		return (List<User>) repository.findAll();
 	}
 	
+	@RequestMapping(value="/api/users/bag/{id}", method = RequestMethod.GET)
+	public @ResponseBody Bag findDGBagByUserId(@PathVariable("id") Long userId) {
+		return bagService.getBagByUserId(userId);
+	}
+
 	@RequestMapping(value="/api/users/{id}", method = RequestMethod.GET)
 	public @ResponseBody User findUserById(@PathVariable("id") Long userId) {
 		return userService.getById(userId);
@@ -86,8 +89,6 @@ public class UserController {
 					
 					if(userRepository.findByEmail(newUser.getEmail()).isEmpty()) {
 						userService.save(newUser);
-						DGBag bag = new DGBag(newUser.getUsername() + "'s bag", "Default", newUser);
-						bagService.save(bag);
 						
 					} 
 					else {
@@ -131,9 +132,6 @@ public class UserController {
 					
 					if(userRepository.findByEmail(newUser.getEmail()).isEmpty()) {
 						userService.save(newUser);
-						DGBag bag = new DGBag(newUser.getUsername() + "'s bag", "Default", newUser);
-						bagService.save(bag);
-						
 					} 
 					else {
 						bindingResult.rejectValue("email", "err.email", "User with this email already exists!");
@@ -190,7 +188,7 @@ public class UserController {
 	@PreAuthorize(value = "hasAuthority('ADMIN')")
 	@RequestMapping(value="/users/deleteuser/{id}", method = RequestMethod.GET)
 	public String deleteUser(@PathVariable("id") Long userId, Model model) {
-		bagService.delete(bagService.getDGBagByUserId(userId));
+		bagService.delete(bagService.getBagByUserId(userId));
 		userService.delete(userService.getById(userId));
 		return "redirect:/users";
 	}
@@ -200,7 +198,7 @@ public class UserController {
 	public String addDiscFromUser(@PathVariable("userid") Long userId, @PathVariable("discid") Long discId, Authentication auth, Model model) {
 		Disc disc = discService.getById(discId);
 		Long myId = userService.getByUsername(auth.getName()).getId();
-		DGBag bag = bagService.getDGBagByUserId(myId);
+		Bag bag = bagService.getBagByUserId(myId);
 		if (!bag.getDiscs().contains(disc)) {
 			disc.addToBag(bag);
 			discService.save(disc);
