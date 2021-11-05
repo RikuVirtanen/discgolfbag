@@ -21,12 +21,12 @@
 		<div class="flex-item">
 			<div class="side-container"></div>
 		</div>
-		<div class="flex-item main-container">
+		<div class="flex-item main">
 			<div>
 				<div class="text-box">
 					<h1>Edit disc</h1>
+					<p>As a admin you can edit disc properties</p>
 				</div>
-				<div class="clear"></div>
 				<form th:object="${disc}" th:action="@{/discs/save}" action="#" method="post">
 					<div class="form-group">
 						<label hidden="hidden" for="id">Id</label>
@@ -72,6 +72,7 @@
 					</div>
 					
 					<div class="form-group">
+						<label for="company">Company</label>
 						<select class="form-control" id="company" th:field="*{company}" style="max-width: 150px">
 							<option value=" "></option>
 							<option th:each="company: ${companies}" th:value="${company.id}" th:text="${company.name}"></option>

@@ -9,7 +9,6 @@ public class SignupForm {
 	private String username = "";
 	
 	@NotEmpty
-	@Size(min=5, max=30)
 	private String email = "";
 	
 	@NotEmpty

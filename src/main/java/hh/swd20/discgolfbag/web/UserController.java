@@ -21,6 +21,7 @@ import hh.swd20.discgolfbag.domain.DGBag;
 import hh.swd20.discgolfbag.domain.Disc;
 import hh.swd20.discgolfbag.domain.SignupForm;
 import hh.swd20.discgolfbag.domain.User;
+import hh.swd20.discgolfbag.domain.UserRepository;
 import hh.swd20.discgolfbag.services.DGBagService;
 import hh.swd20.discgolfbag.services.DiscService;
 import hh.swd20.discgolfbag.services.UserService;
@@ -31,6 +32,8 @@ public class UserController {
 	@Autowired private DGBagService bagService;
 	@Autowired private UserService userService;
 	@Autowired private DiscService discService;
+	
+	@Autowired private UserRepository userRepository;
 	
 	@RequestMapping(value = "/signup", method = RequestMethod.GET)
 	public String signUser(Model model) {
@@ -63,7 +66,7 @@ public class UserController {
 	
 	/************************************************************************/
 	
-	@RequestMapping(value = "/users/saveuser", method = RequestMethod.POST)
+	@RequestMapping(value = "/saveuser", method = RequestMethod.POST)
 	public String save(@Valid @ModelAttribute("signupform") SignupForm signupForm, BindingResult bindingResult) {
 		if (!bindingResult.hasErrors()) {
 			if(signupForm.getPassword().equals(signupForm.getPasswordCheck())) {
@@ -77,10 +80,18 @@ public class UserController {
 				newUser.setEmail(signupForm.getEmail());
 				newUser.setRole("USER");
 
-				if(userService.findByUsername(newUser.getUsername()).isEmpty()) {
-					userService.save(newUser);
-					DGBag bag = new DGBag(newUser.getUsername() + "'s bag", "Default", newUser);
-					bagService.save(bag);
+				if(userRepository.findByUsername(newUser.getUsername()).isEmpty()) {
+					
+					if(userRepository.findByEmail(newUser.getEmail()).isEmpty()) {
+						userService.save(newUser);
+						DGBag bag = new DGBag(newUser.getUsername() + "'s bag", "Default", newUser);
+						bagService.save(bag);
+						
+					} 
+					else {
+						bindingResult.rejectValue("email", "err.email", "User with this email already exists!");
+						return "signup";
+					}
 				}
 				else {
 					bindingResult.rejectValue("username", "err.username", "Username already exists!");
@@ -98,9 +109,11 @@ public class UserController {
 		return "redirect:/login";
 	}
 	
-	@RequestMapping(value = "/users/savenewuser", method = RequestMethod.POST)
-	public String saveNewUser(@Valid @ModelAttribute("signupform") SignupForm signupForm, BindingResult bindingResult) {
+	@RequestMapping(value = "/users/adminsavenewuser", method = RequestMethod.POST)
+	public String adminSaveNewUser(@Valid @ModelAttribute("signupform") SignupForm signupForm, BindingResult bindingResult) {
+		
 		if (!bindingResult.hasErrors()) {
+			
 			if(signupForm.getPassword().equals(signupForm.getPasswordCheck())) {
 				String pwd = signupForm.getPassword();
 				BCryptPasswordEncoder bc = new BCryptPasswordEncoder();
@@ -111,14 +124,23 @@ public class UserController {
 				newUser.setUsername(signupForm.getUsername());
 				newUser.setEmail(signupForm.getEmail());
 				newUser.setRole(signupForm.getRole());
-				if(userService.findByUsername(newUser.getUsername()).isEmpty()) {
-					userService.save(newUser);
-					DGBag bag = new DGBag(newUser.getUsername() + "'s bag", "Default", newUser);
-					bagService.save(bag);
+				
+				if(userRepository.findByUsername(newUser.getUsername()).isEmpty()) {				
+					
+					if(userRepository.findByEmail(newUser.getEmail()).isEmpty()) {
+						userService.save(newUser);
+						DGBag bag = new DGBag(newUser.getUsername() + "'s bag", "Default", newUser);
+						bagService.save(bag);
+						
+					} 
+					else {
+						bindingResult.rejectValue("email", "err.email", "User with this email already exists!");
+						return "adduser";
+					}
 				}
 				else {
 					bindingResult.rejectValue("username", "err.username", "Username already exists!");
-					return "/users/adduser";
+					return "adduser";
 				}
 			}
 			else {
@@ -129,7 +151,7 @@ public class UserController {
 		else {
 			return "adduser";
 		}
-		return "redirect:/userlist";
+		return "redirect:/users";
 	}
 	
 	@RequestMapping(value = "/users/saveolduser", method = RequestMethod.POST)

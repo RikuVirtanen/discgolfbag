@@ -11,6 +11,8 @@ public interface UserRepository extends CrudRepository<User, Long> {
 
 	public Optional<User> findByUsername(@Param("name") String username);
 	
+	public Optional<User> findByEmail(@Param("email") String email);
+	
 	@Query(value="select * from User u where u.username like %:keyword%", nativeQuery=true)
 	public List <User> findByKeyword(@Param("keyword") String keyword);
 }

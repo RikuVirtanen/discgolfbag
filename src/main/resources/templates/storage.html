@@ -22,12 +22,12 @@
 			<div class="side-container"></div>
 		</div>
 		
-		<div class="flex-item main-container">
+		<div class="flex-item table-container">
 			<h1>Storage</h1>
 			<p>Here you can find all discs available.</p>
 			
 			<div class="add-btn" sec:authorize="hasAuthority('ADMIN')">
-				<a class="btn btn-success" th:href="@{/storage/addnew}" >Add</a>
+				<a class="btn btn-success" th:href="@{/discs/storage/addnew}" >Add</a>
 			</div>
 			
 			<form class="form-inline form" action="#" th:action="@{/discs/storage}" method="GET">
