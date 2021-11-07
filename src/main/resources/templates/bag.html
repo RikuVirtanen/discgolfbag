@@ -10,7 +10,8 @@
 <link type="text/css" rel="stylesheet" href="/css/styles.css" th:href="@{/css/styles.css}" /> 
 <script src="https://kit.fontawesome.com/17a4ce7e95.js" crossorigin="anonymous"></script>
 <script type="text/javascript" th:src="@{/js/script.js}" defer></script>
-<title th:text="${user.username}"></title>
+<title th:if="${me}" th:text="mybag"></title>
+<title th:unless="${me}" th:text="${user.username} + '\'s bag'"></title>
 </head>
 <body>
 	<header>
@@ -21,8 +22,9 @@
 			<div class="side-container"></div>
 		</div>
 		<div class="flex-item table-container">
-			<h1 th:text="${user.username} + '\'s virtual discgolf bag'"></h1>
-			<p th:if="${me.username} == ${user.username}" >Here is your disc selection.</p>
+			<h1 th:if="${me}" th:text="${me.username} + '\'s virtual discgolf bag'"></h1>
+			<h1 th:unless="${me}" th:text="${user.username} + '\'s virtual discgolf bag'"></h1>
+			<p>Here is your disc selection.</p>
 			<table class="table table-dark table-striped table-hover list">
 				<tr>
 					<th></th>
@@ -40,29 +42,29 @@
 					<th></th>
 					<th>COMPANY</th>
 					<th></th>
-					<th th:if="${me.username} == ${user.username}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')"></th>
-					<th th:if="${me.username} != ${user.username} and ${bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')"></th>
-					<th th:if="${me.username} != ${user.username} and ${!bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')"></th>
+					<th th:if="${me}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')"></th>
+					<th th:if="${user} and ${bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')"></th>
+					<th th:unless="${user} and ${bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')"></th>
 				</tr>
-				<tr th:each = "disc : ${discs}">
+				<tr th:each = "disc : ${bag}">
 					<td></td>
-					<td th:text="${disc?.category?.name}"></td>
+					<td th:text="${disc?.category?.getCapitalizedName}"></td>
 					<td></td>
-					<td th:text="${disc?.plastic?.name}"></td>
+					<td th:text="${disc?.plastic?.getCapitalizedName}"></td>
 					<td></td>
-					<td th:text="${disc.name}"></td>
+					<td th:text="${disc.getCapitalizedName}"></td>
 					<td></td>
-					<td th:text="${disc?.attributes?.speed} + ' | ' + ${disc?.attributes?.glide} + ' | ' + ${disc?.attributes?.turn} + ' | ' + ${disc?.attributes?.fade}"></td>
+					<td th:text="${disc.speed} + ' | ' + ${disc.glide} + ' | ' + ${disc.turn} + ' | ' + ${disc.fade}"></td>
 					<td></td>
-					<td th:text="${disc?.company?.name}"></td>
+					<td th:text="${disc?.company?.getCapitalizedName}"></td>
 					<td></td>
-					<td th:if="${me.username} == ${user.username}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
+					<td th:if="${me}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
 						<a class="btn btn-warning" th:href="@{/bags/remove/{id}(id=${disc.id})}" >Remove</a>
 					</td>
-					<td th:if="${me.username} != ${user.username} and ${!bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
+					<td th:if="${user} and ${!bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
 						<a class="btn btn-success" th:href="@{/users/{userid}/add/{discid}(userid=${user.id}, discid=${disc.id})}" >Add</a>
 					</td>
-					<td th:if="${me.username} != ${user.username} and ${bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
+					<td th:unless="${user} and ${!bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
 					</td>
 					
 				</tr>

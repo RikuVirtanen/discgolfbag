@@ -1,6 +1,7 @@
 package hh.swd20.discgolfbag.web;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,38 +33,47 @@ public class CompanyController {
 	
 	/******************************** RESTFUL SERVICES *****************************************/
 	
-	@RequestMapping(value = "/api/companies", method = RequestMethod.GET)
+	@RequestMapping(value = "/companies", method = RequestMethod.GET)
 	public @ResponseBody List<Company> getCompaniesRest() {
 		return (List<Company>) repository.findAll();
 	}
 	
-	@RequestMapping(value = "/api/companies/{id}", method=RequestMethod.GET)
-	public @ResponseBody Company getCompanyByIdRest(@PathVariable("id") Long companyId) {
-		return companyService.getById(companyId);
+	@RequestMapping(value = "/companies/{id}", method=RequestMethod.GET)
+	public @ResponseBody Optional<Company> getCompanyByIdRest(@PathVariable("id") Long companyId) {
+		return repository.findById(companyId);
 	}
 	
 	@PreAuthorize(value="hasAuthority('ADMIN')")
-	@RequestMapping(value = "/api/companies", method = RequestMethod.POST)
+	@RequestMapping(value = "/companies", method = RequestMethod.POST)
 	public @ResponseBody void saveCompanyRest(@RequestBody Company company) {
-		companyService.save(company);
+		repository.save(company);
 	}
 	
 	/********************************************************************************************/
 	
-	@RequestMapping(value="/companies", method=RequestMethod.GET)
-	public String listCompanies(Model model) {
+	@RequestMapping(value="/companies")
+	public String listCompanies(Model model, String keyword) {
+		if(keyword != null ) {
+			model.addAttribute("companies", repository.findByKeyword(keyword.toLowerCase()));
+		} else {
+			model.addAttribute("companies", companyService.getAll());
+		}
 		model.addAttribute("company", new Company());
-		model.addAttribute("companies", companyService.getAll());
 		return "companylist"; //thymeleaf template
 	}
 	
 	@PreAuthorize(value="hasAuthority('ADMIN')")
-	@RequestMapping(value="/companies/save", method=RequestMethod.POST)
-	public String saveCompany(Company company) {
-		if(!repository.findByName(company.capitalize(company.getName())).isEmpty()) {
+	@RequestMapping(value={"/companies/save", "/companies/save/{id}"}, method=RequestMethod.POST)
+	public String saveCompany(@PathVariable(required=false) Long id, Company company) {
+		if(id != null) {
+			company.setName(company.getName().toLowerCase());
+			repository.save(company);
 			return "redirect:/companies";
 		}
-		company.setName(company.capitalize(company.getName()));
+		else if(!repository.findByName(company.getName().toLowerCase()).isEmpty()) {
+			return "redirect:/companies";
+		}
+		company.setName(company.getName().toLowerCase());
 		repository.save(company);
 		return "redirect:/companies";
 	}
@@ -78,26 +88,27 @@ public class CompanyController {
 	}
 	
 	@PreAuthorize(value="hasAuthority('ADMIN')")
-	@RequestMapping(value="/companies/editcompany/{id}", method=RequestMethod.GET)
-	public String editCompany(@PathVariable("id") Long companyId, Model model) {
-		model.addAttribute("company", companyService.getById(companyId));
-		return "editcompany"; //thymeleaf template
-	}
-	
-	@PreAuthorize(value="hasAuthority('ADMIN')")
-	@RequestMapping(value = "/companies/company/{id}/saveplastic", method = RequestMethod.POST)
-	public String savePlastic(@PathVariable("id") Long companyId, Model model, Plastic plastic) {
+	@RequestMapping(value = {"/companies/company/{id}/saveplastic", "/companies/company/{id}/saveplastic/{plasticid}"}, method = RequestMethod.POST)
+	public String savePlastic(@PathVariable("id") Long companyId, @PathVariable(required=false) Long plasticId, Model model, Plastic plastic) {
 		Company company = companyService.getById(companyId);
-		if(companyService.getById(companyId).getPlastics().contains(plastic)) {
+		if(plasticId != null) {
+			Plastic oldPlastic = plasticRepository.findById(plasticId).get();
+			oldPlastic.setName(oldPlastic.getName().toLowerCase());
+			plasticRepository.save(oldPlastic);
+			return "redirect:/companies/company/{id}";
+		}
+		
+		else if(companyService.getById(companyId).getPlastics().contains(plastic)) {
 			return "redirect:/companies/company/{id}";
 		}
 		else {
-			plastic.setName(plastic.capitalize(plastic.getName()));
+			plastic.setName(plastic.getName().toLowerCase());
 			plastic.setCompany(company);
 			plasticRepository.save(plastic);
 			return "redirect:/companies/company/{id}";
 		}
 	}
+	
 	@PreAuthorize(value="hasAuthority('ADMIN')")
 	@RequestMapping(value="/companies/company/{id}/delete/{plasticid}", method = RequestMethod.GET)
 	public String deletePlastic(@PathVariable("id") Long companyId, @PathVariable("plasticid") Long plasticId) {

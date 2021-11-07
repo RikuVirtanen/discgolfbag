@@ -39,7 +39,7 @@ public class Plastic {
 
 	public Plastic(String name, Company company) {
 		super();
-		this.name = name;
+		this.name = name.toLowerCase();
 		this.company = company;
 	}
 
@@ -50,13 +50,16 @@ public class Plastic {
 	public void setId(Long id) {
 		this.id = id;
 	}
-
+	
 	public String getName() {
 		return name;
 	}
 
+	public String getCapitalizedName() {
+		return capitalize(name);	}
+
 	public void setName(String name) {
-		this.name = name;
+		this.name = name.toLowerCase();
 	}
 
 	public Company getCompany() {
@@ -89,6 +92,6 @@ public class Plastic {
 
 	@Override
 	public String toString() {
-		return "Plastic [id=" + id + ", name=" + name + "]";
+		return "Plastic [id=" + id + ", name=" + capitalize(name) + "]";
 	}
 }

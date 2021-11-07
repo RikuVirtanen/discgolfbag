@@ -1,6 +1,7 @@
 package hh.swd20.discgolfbag.web;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import hh.swd20.discgolfbag.domain.Bag;
+import hh.swd20.discgolfbag.domain.BagRepository;
 import hh.swd20.discgolfbag.domain.Disc;
 import hh.swd20.discgolfbag.domain.SignupForm;
 import hh.swd20.discgolfbag.domain.User;
@@ -39,31 +41,26 @@ public class UserController {
 	@Autowired private UserService userService;
 	@Autowired private DiscService discService;
 	@Autowired private UserRepository userRepository;
-	
-	@RequestMapping(value = "/signup", method = RequestMethod.GET)
-	public String signUser(Model model) {
-		model.addAttribute("signupform", new SignupForm());
-		return "signup";
-	}
+	@Autowired private BagRepository bagRepository;
 	
 	/********************* RESTFUL SERVICES *********************************/
 	
-	@RequestMapping(value="/api/users", method = RequestMethod.GET)
+	@RequestMapping(value="/users", method = RequestMethod.GET)
 	public @ResponseBody List <User> findUsersRest() {
 		return (List<User>) repository.findAll();
 	}
 	
-	@RequestMapping(value="/api/users/bag/{id}", method = RequestMethod.GET)
-	public @ResponseBody Bag findDGBagByUserId(@PathVariable("id") Long userId) {
-		return bagService.getBagByUserId(userId);
+	@RequestMapping(value="/users/bag/{id}", method = RequestMethod.GET)
+	public @ResponseBody Optional <Bag> findDGBagByUserId(@PathVariable("id") Long userId) {
+		return bagRepository.findBagByUserId(userId);
 	}
 
-	@RequestMapping(value="/api/users/{id}", method = RequestMethod.GET)
-	public @ResponseBody User findUserById(@PathVariable("id") Long userId) {
-		return userService.getById(userId);
+	@RequestMapping(value="/users/{id}", method = RequestMethod.GET)
+	public @ResponseBody Optional<User> findUserById(@PathVariable("id") Long userId) {
+		return userRepository.findById(userId);
 	}
 	
-	@RequestMapping(value="/api/users/username", method = RequestMethod.GET)
+	@RequestMapping(value="/users/username", method = RequestMethod.GET)
 	@ResponseBody
 	public String currentUsername(Authentication auth) {
 		return auth.getName();
@@ -151,16 +148,16 @@ public class UserController {
 		else {
 			return "adduser";
 		}
-		return "redirect:/users";
+		return "redirect:/userlist";
 	}
 	
 	@RequestMapping(value = "/users/saveolduser", method = RequestMethod.POST)
 	public String saveOldUser(@ModelAttribute User user) {
 		userService.save(user);
-		return "redirect:/users";
+		return "redirect:/userlist";
 	}
 	
-	@RequestMapping(value = "/users", method = RequestMethod.GET)
+	@RequestMapping(value = "/userlist", method = RequestMethod.GET)
 	public String listUsers(Model model, String keyword) {
 		
 		if(keyword != null) {
@@ -190,7 +187,7 @@ public class UserController {
 	public String deleteUser(@PathVariable("id") Long userId, Model model) {
 		bagService.delete(bagService.getBagByUserId(userId));
 		userService.delete(userService.getById(userId));
-		return "redirect:/users";
+		return "redirect:/userlist";
 	}
 	
 	@PreAuthorize(value = "hasAnyAuthority('USER', 'ADMIN')")
@@ -207,6 +204,15 @@ public class UserController {
 		} 
 		model.addAttribute("userid", userId);
 		
-		return "redirect:/bags/findusersbag/{userid}";
+		return "redirect:/bags/mybag/{userid}";
 	}
+	
+	@PreAuthorize(value = "hasAnyAuthority('USER', 'ADMIN')")
+	@RequestMapping(value = "/users/profile", method = RequestMethod.GET)
+	public String userProfile(Authentication auth, Model model) {
+		User user = userService.getByUsername(auth.getName());
+		model.addAttribute("user", user);
+		return "profile";
+	}
+	
 }

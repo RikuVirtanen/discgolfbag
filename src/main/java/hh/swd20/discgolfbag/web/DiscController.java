@@ -1,6 +1,7 @@
 package hh.swd20.discgolfbag.web;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import hh.swd20.discgolfbag.domain.Attributes;
 import hh.swd20.discgolfbag.domain.Bag;
 import hh.swd20.discgolfbag.domain.Disc;
 import hh.swd20.discgolfbag.domain.DiscRepository;
@@ -41,8 +41,8 @@ public class DiscController {
 	
 	@RequestMapping(value = "/discs/storage", method = RequestMethod.GET)
 	public String storage(Model model, String keyword, Authentication auth) {
-		if(keyword != null) {
-			model.addAttribute("discs", discService.getDiscsByKeyword(keyword));
+		if(keyword != null ) {
+			model.addAttribute("discs", repository.findByKeyword(keyword.toLowerCase()));
 		} else {
 			model.addAttribute("discs", discService.getDiscs());
 		}
@@ -52,25 +52,25 @@ public class DiscController {
 	
 	/******************RESTFUL SERVICES **************************/
 	
-	@RequestMapping(value = "/api/discs", method = RequestMethod.GET)
+	@RequestMapping(value = "/discs", method = RequestMethod.GET)
 	public @ResponseBody List<Disc> discListRest() {
 		return (List<Disc>) repository.findAll();
 	}
 	
-	@RequestMapping(value = "/api/discs/{id}", method = RequestMethod.GET)
-	public @ResponseBody Disc findDiscRest(@PathVariable("id") Long discId) {
-		return discService.getById(discId);
+	@RequestMapping(value = "/discs/{id}", method = RequestMethod.GET)
+	public @ResponseBody Optional<Disc> findDiscRest(@PathVariable("id") Long discId) {
+		return repository.findById(discId);
 	}
 	
-	@RequestMapping(value = "/api/discs/{name}", method = RequestMethod.GET)
-	public @ResponseBody Disc findDiscRest(@PathVariable("name") String discName) {
-		return discService.getByName(discName);
+	@RequestMapping(value = "/discs/{name}", method = RequestMethod.GET)
+	public @ResponseBody Optional<Disc> findDiscRest(@PathVariable("name") String discName) {
+		return repository.findByName(discName);
 	}
 	
 	@PreAuthorize(value = "hasAuthority('ADMIN')")
-	@RequestMapping(value = "/api/discs", method = RequestMethod.POST)
+	@RequestMapping(value = "/discs", method = RequestMethod.POST)
 	public @ResponseBody void saveDiscRest(@RequestBody Disc disc) {
-		discService.save(disc);
+		repository.save(disc);
 	}
 	
 	/*************************************************************/
@@ -80,7 +80,6 @@ public class DiscController {
 	public String saveDisc(@ModelAttribute Disc disc) {
 		// saves new disc with its info
 		disc.setName(disc.capitalize(disc.getName()));
-		disc.setAttributes(disc.getAttributes());
 		disc.setCategory(disc.getCategory());
 		disc.setCompany(disc.getCompany());
 		disc.setPlastic(disc.getPlastic());
@@ -90,10 +89,9 @@ public class DiscController {
 	}
 	
 	@PreAuthorize(value = "hasAuthority('ADMIN')")
-	@RequestMapping(value = "/discs/storage/addnew", method = RequestMethod.GET)
+	@RequestMapping(value = "/discs/storage/add", method = RequestMethod.GET)
 	public String addNewDisc(Model model) {
 		model.addAttribute("disc", new Disc());
-		model.addAttribute("attributes", new Attributes());
 		model.addAttribute("categories", categoryService.getAll());
 		model.addAttribute("companies", companyService.getAll());
 		model.addAttribute("plastics", plasticService.getAll());
@@ -102,7 +100,7 @@ public class DiscController {
 	}
 	
 	@PreAuthorize(value = "hasAnyAuthority('USER', 'ADMIN')")
-	@RequestMapping(value = "/discs/storage/add/{discid}", method = RequestMethod.GET)
+	@RequestMapping(value = "/discs/storage/addtobag/{discid}", method = RequestMethod.GET)
 	public String addDiscToBag(@PathVariable("discid") Long discId, Authentication auth) {
 		Disc disc = discService.getById(discId);
 		Long userId = userService.getByUsername(auth.getName()).getId();
@@ -123,6 +121,7 @@ public class DiscController {
 		model.addAttribute("disc", discService.getById(discId));
 		model.addAttribute("categories", categoryService.getAll());
 		model.addAttribute("companies", companyService.getAll());
+		model.addAttribute("plastics", plasticService.getAll());
 		return "editdisc";
 	}
 	

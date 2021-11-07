@@ -25,19 +25,17 @@
 		<div class="flex-item table-container">
 			<h1>Storage</h1>
 			<p>Here you can find all discs available.</p>
-			
-			<div class="add-btn" sec:authorize="hasAuthority('ADMIN')">
-				<a class="btn btn-success" th:href="@{/discs/storage/addnew}" >Add</a>
-			</div>
+			<a class="btn btn-success" th:href="@{/discs/storage/add}" sec:authorize="hasAuthority('ADMIN')" >Add</a>
 			
 			<form class="form-inline search-bar" action="#" th:action="@{/discs/storage}" method="GET">
 				<input class="form-control mr-sm-2" type="search" placeholder="Search discs" aria-label="Search" name="keyword" id="txtSearch" />
 				<button class="btn btn-outline-succes my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
 			</form>
-			
 			<table class="table table-dark table-striped table-hover list">
 				
 				<tr>
+					<th></th>
+					<th>COMPANY</th>
 					<th></th>
 					<th>TYPE</th>
 					<th></th>
@@ -51,8 +49,6 @@
 						S | G | T | F
 					</th>
 					<th></th>
-					<th>COMPANY</th>
-					<th></th>
 					<th th:if="${bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')"></th>
 					<th th:if="${!bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')"></th>
 					<th sec:authorize="hasAuthority('ADMIN')"></th>
@@ -61,18 +57,18 @@
 							
 				<tr th:each = "disc : ${discs}">
 					<td></td>
-					<td th:text="${disc?.category?.name}"></td>
+					<td th:text="${disc?.company?.getCapitalizedName}"></td>
 					<td></td>
-					<td th:text="${disc?.plastic?.name}"></td>
+					<td th:text="${disc?.category?.getCapitalizedName}"></td>
 					<td></td>
-					<td th:text="${disc.name}"></td>
+					<td th:text="${disc?.plastic?.getCapitalizedName}"></td>
 					<td></td>
-					<td th:text="${disc?.attributes?.speed} + ' | ' + ${disc?.attributes?.glide} + ' | ' + ${disc?.attributes?.turn} + ' | ' + ${disc?.attributes?.fade}"></td>
+					<td th:text="${disc.getCapitalizedName}"></td>
 					<td></td>
-					<td th:text="${disc?.company?.name}"></td>
+					<td th:text="${disc.speed} + ' | ' + ${disc.glide} + ' | ' + ${disc.turn} + ' | ' + ${disc.fade}"></td>
 					<td></td>
 					<td th:if="${!bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
-						<a class="btn btn-success" th:href="@{/discs/storage/add/{id}(id=${disc.id})}" >Add</a>
+						<a class="btn btn-success" th:href="@{/discs/storage/addtobag/{id}(id=${disc.id})}" >Add</a>
 					</td>
 					<td th:if="${bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
 					</td>

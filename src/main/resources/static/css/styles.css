@@ -2,6 +2,11 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap');
 
+/******************************************
+
+				UNIVERSAL 
+				
+******************************************/
 *{
 	margin: 0;
 	padding: 0;
@@ -33,9 +38,17 @@ footer {
 	z-index: 10;
 }
 
-.container {
-	position: relative;
-	min-height: 100vh;
+.error {
+	color: red;
+}
+
+/*****************************************
+
+ 				CONTAINERS
+  
+*****************************************/
+.main-container {
+	margin-top: 10vh;	
 }
 
 .login-container {
@@ -45,38 +58,15 @@ footer {
 	margin-top: 10vh;
 }
 
-.main {
-	margin-top: 10vh;
-	padding: 5vh;
-	background: white;
-}
-
 .table-container {
-	margin-top: 10vh;
+	margin-top: 5vh;
 	padding: 5vh;
-}
-
-.content {
-	width: 100%;
+	width: 80vw;
 }
 
 .form-container {
 	justify-content: center;
 	text-align: center;
-}
-
-.form-flex {
-	display: flex;
-	justify-content: center;
-}
-
-.no-input {
-	width: 5vw;
-}
-
-.table {
-	width: 100vw;
-	margin-top: 2.5vh;
 }
 
 .side-container {
@@ -86,6 +76,43 @@ footer {
 
 .input-container {
 	display: flex-end;
+}
+
+/****************************************
+
+				LINKS
+
+****************************************/
+
+.link-white {
+	color: white;
+}
+
+.link-white:hover {
+	color: grey;
+}
+
+.link-light {
+	color: grey;
+}
+
+.link-dark {
+	color: black;
+}
+
+/****************************************
+
+				FORM & TABLE
+
+****************************************/
+
+.form-flex {
+	display: flex;
+	justify-content: center;
+}
+
+.no-input {
+	width: 5vw;
 }
 
 .input-help {
@@ -98,17 +125,42 @@ footer {
 	display: block;
 }
 
-.text-box {
-	display: flex;
-	flex-direction: column;
-	text-align: center;
-	align-items: center;
-	justify-content: center;
+.add-form {
+	float: left;
+	padding: 10px;
+	padding-left: 0;
 }
 
-.text-box .add-btn {
-	margin-left: 50px; 
+.search-bar {
+	float: right;
+	padding: 10px;
 }
+
+.span {
+	padding: 10px;
+}
+
+/****************************************
+
+				DIVIDERS
+
+****************************************/
+
+.clear {
+	display: block;
+	height: 10vh;
+}
+
+.clear-width {
+	display: block;
+	width: 3vw;
+}
+
+/****************************************
+
+				SWITCH
+
+****************************************/
 
 .theme-toggler {
 	display: flex;
@@ -178,47 +230,4 @@ footer {
 
 .slider.round:before {
   border-radius: 50%;
-}
-
-.list {
-	width: 80vw;
-}
-
-.clear {
-	display: block;
-	height: 10vh;
-}
-
-.clear-width {
-	display: block;
-	width: 3vw;
-}
-
-.error {
-	color: red;
-}
-
-#add {
-	display: block;
-	justify-content: center;
-	width: 25vw;
-}
-
-.search-bar {
-	float: right;
-	padding: 10px;
-}
-
-.add-form {
-	float: left;
-	padding: 10px;
-	padding-left: 0;
-}
-
-.link {
-	color: white;
-}
-
-.span {
-	margin: 10px;
 }

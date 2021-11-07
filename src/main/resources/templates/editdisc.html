@@ -21,72 +21,74 @@
 		<div class="flex-item">
 			<div class="side-container"></div>
 		</div>
-		<div class="flex-item main">
+		<div class="flex-item main-container">
 			<div>
 				<div class="text-box">
 					<h1>Edit disc</h1>
 					<p>As a admin you can edit disc properties</p>
 				</div>
 				<form th:object="${disc}" th:action="@{/discs/save}" action="#" method="post">
-					<div class="form-group">
+				
+					<div class="d-flex form-group">
 						<label hidden="hidden" for="id">Id</label>
-						<input class="form-control" type="hidden" id="id" th:field="${disc.id}" />
+						<input class="form-control" type="hidden" id="id" th:field="${disc.id}" required />
+						<span>
+							<label for="name">Name</label>
+							<input class="form-control" type="text" id="name" placeholder="Name the disc" th:field="${disc.name}" style="max-width: 200px" required />
+						</span>
+						<div class="clear-width"></div>
+						<span>
+							<label for="category">Type</label>
+							<select class="form-control" id="category" th:field="*{category}" style="max-width: 200px" required >
+								<option value="" th:disabled selected >Choose the type</option>
+								<option th:each="category: ${categories}" th:value="${category.id}" th:text="${category.getCapitalizedName}"></option>
+							</select>
+						</span>
+					</div>
+					<div class="d-flex form-group">	
+					
+						<span>
+							<label for="company">Company</label>
+							<select class="form-control" id="company" th:field="*{company}" style="width: 200px" required onchange="showPlastics()">
+								<option value="" th:disabled selected >Choose the company</option>
+								<option th:each="company: ${companies}" th:value="${company.id}" th:text="${company.getCapitalizedName}"></option>
+							</select>
+						</span>
+						<div class="clear-width"></div>
+						<span>
+							<label for="plastic">Plastic</label>
+							<select class="form-control" id="plastic" th:field="*{plastic}" style="width: 200px" required >
+								<option value="" th:disabled selected >Choose the type</option>
+								<option th:each="plastic: ${plastics}" th:value="${plastic.id}" th:text="${plastic.getCapitalizedName}"></option>
+							</select>
+						</span>
+						
+						<div class="clear-width"></div>
+						
 					</div>
 					
-					<div class="form-group">
-						<label for="company">Company</label>
-						<select class="form-control" id="company" th:field="*{company}" style="max-width: 150px">
-							<option th:each="company: ${companies}" th:value="${company.id}" th:text="${company.name}"></option>
-						</select>
+					<div class="d-flex form-group">
+						<span class="span">
+							<label for="speed">Speed</label>
+							<input class="form-control" type="number" id="speed" min="0" max="16" th:field="*{speed}" required />
+						</span>
+						<span class="span">
+							<label for="glide">Glide</label>
+							<input class="form-control" type="number" id="glide" min="0" max="6" th:field="*{glide}" required />
+						</span>
+						<span class="span">
+							<label for="turn">Turn</label>
+							<input class="form-control" type="number" id="turn" min="-5" max="4" th:field="*{turn}" required />
+						</span>
+						<span class="span">
+							<label for="fade">Fade</label>
+							<input class="form-control" type="number" id="fade" min="0" max="5" th:field="*{fade}" required />
+						</span>
 					</div>
-					
-					<div class="form-group">
-						<label for="name">Name</label>
-						<input class="form-control" type="text" id="name" th:field="${disc.name}" />
+					<div class="form-group form-flex">
+						<button class="btn btn-secondary" type="submit">Save</button>
+						<button class="btn" type="reset">Reset</button>
 					</div>
-					
-					<div class="form-group">
-						<label for="plastic">Plastic</label>
-						<input class="form-control" type="text" id="plastic" th:field="${plastic.name}" />
-					</div>
-					
-					<div class="form-group">
-						<label for="company">Plastic</label>
-						<select class="form-control" id="plastic" th:field="*{plastic}" style="max-width: 150px">
-							<option value=" "></option>
-							<option th:each="plastic: ${plastics}" th:if="plastic.company.id == company.id" th:value="${plastic.id}" th:text="${plastic.name}"></option>
-						</select>
-					</div>
-					
-					<div class="form-group">
-						<label hidden="hidden" for="speed">Speed</label>
-						<input class="form-control" type="hidden" id="speed" th:field="${disc.speed}" />
-					</div>
-					
-					<div class="form-group">
-						<label hidden="hidden" for="glide">Glide</label>
-						<input class="form-control" type="hidden" id="glide" th:field="${disc.glide}" />
-					</div>
-					
-					<div class="form-group">
-						<label hidden="hidden" for="turn">Turn</label>
-						<input class="form-control" type="hidden" id="turn" th:field="${disc.turn}" />
-					</div>
-					
-					<div class="form-group">
-						<label hidden="hidden" for="fade">Fade</label>
-						<input class="form-control" type="hidden" id="fade" th:field="${disc.fade}" />
-					</div>
-					
-					<div class="form-group">
-						<label for="category">Type</label>
-						<select class="form-control" id="category" th:field="*{category}" style="max-width: 150px">
-							<option th:each="category: ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
-						</select>
-					</div>
-					
-					<button class="btn btn-secondary" type="submit">Save</button>
-					<button class="btn" type="reset">Reset</button>
 				</form>
 			</div>
 		</div>

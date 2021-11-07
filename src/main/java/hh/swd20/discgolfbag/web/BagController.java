@@ -1,6 +1,7 @@
 package hh.swd20.discgolfbag.web;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,6 +19,7 @@ import hh.swd20.discgolfbag.domain.Bag;
 import hh.swd20.discgolfbag.domain.BagRepository;
 import hh.swd20.discgolfbag.domain.Disc;
 import hh.swd20.discgolfbag.domain.DiscRepository;
+import hh.swd20.discgolfbag.domain.User;
 import hh.swd20.discgolfbag.services.BagService;
 import hh.swd20.discgolfbag.services.DiscService;
 import hh.swd20.discgolfbag.services.UserService;
@@ -35,51 +37,40 @@ public class BagController {
 	
 	/************************* RESTFUL SERVICES ****************************/
 	
-	@RequestMapping(value="/api/bags", method = RequestMethod.GET)
+	@RequestMapping(value="/bags", method = RequestMethod.GET)
 	public @ResponseBody List<Bag> getDGBagsRest() {
-		return bagService.getAll();
+		return (List<Bag>) repository.findAll();
 	}
 	
-	@RequestMapping(value="/api/bags/{id}", method = RequestMethod.GET)
-	public @ResponseBody Bag findDGBagRest(@PathVariable("id") Long bagId) {
-		return bagService.getById(bagId);
+	@RequestMapping(value="/bags/{id}", method = RequestMethod.GET)
+	public @ResponseBody Optional<Bag> findDGBagRest(@PathVariable("id") Long bagId) {
+		return repository.findById(bagId);
 	}
 	
 	/**********************************************************************/
 	
 	@PreAuthorize(value = "hasAnyAuthority('USER', 'ADMIN')")
-	@RequestMapping(value = "/bags/mybag", method = RequestMethod.GET)
-	public String listMyDiscs(Model model, Authentication auth, String keyword) {
-		Long userId = userService.getByUsername(auth.getName()).getId();
-		model.addAttribute("user", userService.getByUsername(auth.getName()));
-		model.addAttribute("me", userService.getByUsername(auth.getName()));
-		List <Disc> discs = bagService.getBagByUserId(userId).getDiscs();
-		model.addAttribute("discs", discs);	
-		model.addAttribute("bag", 
-				bagService.getBagByUserId(
-						userService.getByUsername(
-								auth.getName()).getId()).getDiscs()
-				);
-		return "bag";
-	}
-	
-	@PreAuthorize(value = "hasAnyAuthority('USER', 'ADMIN')")
-	@RequestMapping(value = "/bags/findusersbag/{id}", method = RequestMethod.GET)
-	public String findUsersBag(@PathVariable("id") Long userId, Model model, Authentication auth) {
-		if(bagService.getBagByUserId(userId) == null) {
-			return "redirect:/users";
-		} else {
-			List <Disc> discs = bagService.getBagByUserId(userId).getDiscs();
-			model.addAttribute("discs", discs);
-			model.addAttribute("user", userService.getById(userId));
-			model.addAttribute("me", userService.getByUsername(auth.getName()));
-			model.addAttribute("bag", 
-					bagService.getBagByUserId(
-							userService.getByUsername(
-									auth.getName()).getId()).getDiscs()
-					);
-			return "bag";
+	@RequestMapping(value = {"/bags/mybag", "/bags/mybag/{id}"}, method = RequestMethod.GET)
+	public String listMyDiscs(@PathVariable(required = false) Long id, Model model, Authentication auth, String keyword) {
+		if (id != null) {
+			if(id != userService.getByUsername(auth.getName()).getId()) {
+				User user = userService.getById(id);
+				model.addAttribute("user", user);
+				model.addAttribute("bag", bagService.getBagByUserId(id).getDiscs());
+			}
+			else {
+				User me = userService.getByUsername(auth.getName());
+				model.addAttribute("me", me);
+				model.addAttribute("bag", bagService.getBagByUserId(me.getId()).getDiscs());
+			}
 		}
+		else {
+			User me = userService.getByUsername(auth.getName());
+			model.addAttribute("me", me);
+			model.addAttribute("bag", bagService.getBagByUserId(me.getId()).getDiscs());
+		}
+		
+		return "bag";
 	}
 	
 	@PreAuthorize(value = "hasAuthority('USER')")

@@ -10,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -20,13 +19,13 @@ public class Disc {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id; 
-	
 	private String name;
+	private String capitalizedName;
+	private String speed;
+	private String glide;
+	private String turn;
+	private String fade;
 	
-	@OneToOne(cascade = CascadeType.ALL)
-	@JsonIgnore
-	@JoinColumn(name = "attributesid", referencedColumnName = "id")
-	private Attributes attributes;
 	
 	@ManyToOne
 	//@JsonIgnore
@@ -53,30 +52,42 @@ public class Disc {
 	public Disc() {
 		super();
 		this.name = null;
-		this.attributes = new Attributes(0, 0, 0, 0, this);
+		this.capitalizedName = null;
+		this.speed = null;
+		this.glide = null;
+		this.turn = null;
+		this.fade = null;
 		this.plastic = null;
 		this.category = null;
 		this.company = null;
 	}
 	
-	public Disc(String name, Plastic plastic, Category category, 
-			Company company) {
+	public Disc(String name, String speed, String glide, String turn, String fade, Plastic plastic,
+			Category category, Company company) {
 		super();
-		this.name = name;
-		this.attributes = new Attributes(0, 0, 0, 0, this);
+		this.name = name.toLowerCase();
+		this.capitalizedName = capitalize(name);
+		this.speed = speed;
+		this.glide = glide;
+		this.turn = turn;
+		this.fade = fade;
 		this.plastic = plastic;
 		this.category = category;
 		this.company = company;
+		this.bags = null;
 	}
 	
-	public Disc(String name, Attributes attributes, Plastic plastic, Category category, 
-			Company company) {
-		super();
-		this.name = name;
-		this.attributes = attributes;
-		this.plastic = plastic;
-		this.category = category;
-		this.company = company;
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name.toLowerCase();
+		this.capitalizedName = capitalize(name);
+	}
+	
+	public String getCapitalizedName() {
+		return capitalizedName;
 	}
 
 	public Long getId() {
@@ -87,20 +98,36 @@ public class Disc {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getSpeed() {
+		return speed;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setSpeed(String speed) {
+		this.speed = speed;
 	}
 
-	public Attributes getAttributes() {
-		return attributes;
+	public String getGlide() {
+		return glide;
 	}
 
-	public void setAttributes(Attributes attributes) {
-		this.attributes = attributes;
+	public void setGlide(String glide) {
+		this.glide = glide;
+	}
+
+	public String getTurn() {
+		return turn;
+	}
+
+	public void setTurn(String turn) {
+		this.turn = turn;
+	}
+
+	public String getFade() {
+		return fade;
+	}
+
+	public void setFade(String fade) {
+		this.fade = fade;
 	}
 
 	public Plastic getPlastic() {
@@ -126,15 +153,15 @@ public class Disc {
 	public void setCompany(Company company) {
 		this.company = company;
 	}
-	
+
 	public List<Bag> getBags() {
 		return bags;
 	}
-	
+
 	public void setBags(List<Bag> bags) {
 		this.bags = bags;
 	}
-	
+
 	public void addToBag(Bag bag) {
 		this.bags.add(bag);
 	}
@@ -157,7 +184,10 @@ public class Disc {
 
 	@Override
 	public String toString() {
-		return "Disc [id=" + id + ", name=" + name + ", attributes=" + attributes + ", plastic=" + plastic
-				+ ", category=" + category + ", company=" + company + ", bags=" + bags + "]";
+		return "Disc [id=" + id + ", speed=" + speed + ", glide=" + glide + ", turn=" + turn + ", fade=" + fade
+				+ ", name=" + capitalize(name) + ", plastic=" + plastic + ", category=" + category + ", company=" + company
+				+ "]";
 	}
+
+	
 }

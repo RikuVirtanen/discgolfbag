@@ -21,7 +21,7 @@
 		<div class="flex-item">
 			<div class="side-container"></div>
 		</div>
-		<div class="flex-item table-container">
+		<div class="flex-item main-container">
 			<div>
 				<h1>Add disc</h1>
 				<form th:object="${disc}" th:action="@{/discs/save}" action="#" method="post">
@@ -38,7 +38,7 @@
 							<label for="category">Type</label>
 							<select class="form-control" id="category" th:field="*{category}" style="max-width: 200px" required >
 								<option value="" th:disabled selected >Choose the type</option>
-								<option th:each="category: ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+								<option th:each="category: ${categories}" th:value="${category.id}" th:text="${category.getCapitalizedName}"></option>
 							</select>
 						</span>
 					</div>
@@ -48,7 +48,7 @@
 							<label for="company">Company</label>
 							<select class="form-control" id="company" th:field="*{company}" style="width: 200px" required onchange="showPlastics()">
 								<option value="" th:disabled selected >Choose the company</option>
-								<option th:each="company: ${companies}" th:value="${company.id}" th:text="${company.name}"></option>
+								<option th:each="company: ${companies}" th:value="${company.id}" th:text="${company.getCapitalizedName}"></option>
 							</select>
 						</span>
 						<div class="clear-width"></div>
@@ -56,7 +56,7 @@
 							<label for="plastic">Plastic</label>
 							<select class="form-control" id="plastic" th:field="*{plastic}" style="width: 200px" required >
 								<option value="" th:disabled selected >Choose the type</option>
-								<option th:each="plastic: ${plastics}" th:value="${plastic.id}" th:text="${plastic.name}"></option>
+								<option th:each="plastic: ${plastics}" th:value="${plastic.id}" th:text="${plastic.getCapitalizedName}"></option>
 							</select>
 						</span>
 						
@@ -67,19 +67,19 @@
 					<div class="d-flex form-group">
 						<span class="span">
 							<label for="speed">Speed</label>
-							<input class="form-control" type="number" id="speed" min="0" max="16" th:field="*{attributes.speed}" required />
+							<input class="form-control" type="number" id="speed" min="0" max="16" th:field="*{speed}" required />
 						</span>
 						<span class="span">
 							<label for="glide">Glide</label>
-							<input class="form-control" type="number" id="glide" min="0" max="6" th:field="*{attributes.glide}" required />
+							<input class="form-control" type="number" id="glide" min="0" max="6" th:field="*{glide}" required />
 						</span>
 						<span class="span">
 							<label for="turn">Turn</label>
-							<input class="form-control" type="number" id="turn" min="-5" max="4" th:field="*{attributes.turn}" required />
+							<input class="form-control" type="number" id="turn" min="-5" max="4" th:field="*{turn}" required />
 						</span>
 						<span class="span">
 							<label for="fade">Fade</label>
-							<input class="form-control" type="number" id="fade" min="0" max="5" th:field="*{attributes.fade}" required />
+							<input class="form-control" type="number" id="fade" min="0" max="5" th:field="*{fade}" required />
 						</span>
 					</div>
 					<div class="form-group form-flex">

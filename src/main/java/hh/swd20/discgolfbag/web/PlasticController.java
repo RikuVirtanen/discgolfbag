@@ -1,6 +1,7 @@
 package hh.swd20.discgolfbag.web;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,33 +14,29 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import hh.swd20.discgolfbag.domain.Plastic;
+import hh.swd20.discgolfbag.domain.PlasticRepository;
 import hh.swd20.discgolfbag.services.PlasticService;
 
 @CrossOrigin
 @Controller
 public class PlasticController {
 	
+	@Autowired private PlasticRepository repository;
 	@Autowired private PlasticService plasticService;
 	
 	/************************ RESTFUL SERVICES *****************************/
 	
-	@RequestMapping(value = "/api/plastics", method = RequestMethod.GET)
+	@RequestMapping(value = "/plastics", method = RequestMethod.GET)
 	public @ResponseBody List<Plastic> getPlasticsRest() {
-		return plasticService.getAll();
+		return (List<Plastic>) repository.findAll();
 	}
 	
 	@RequestMapping(value = "/api/plastics/{id}", method = RequestMethod.GET)
-	public @ResponseBody Plastic getPlasticByIdRest(@PathVariable("id") Long plasticId) {
-		return plasticService.getById(plasticId);
+	public @ResponseBody Optional<Plastic> getPlasticByIdRest(@PathVariable("id") Long plasticId) {
+		return repository.findById(plasticId);
 	}
 	
 	/***********************************************************************/
-	
-	@RequestMapping(value="/plastics", method=RequestMethod.GET)
-	public String listPlastics(Model model) {
-		model.addAttribute("plastics", plasticService.getAll());
-		return "plasticlist";  //thymeleaf template
-	}
 	
 	@PreAuthorize(value="hasAuthority('ADMIN')")
 	@RequestMapping(value="/plastics/editplastic/{id}", method=RequestMethod.GET)
@@ -50,7 +47,7 @@ public class PlasticController {
 	@PreAuthorize(value="hasAuthority('ADMIN')")
 	@RequestMapping(value="/plastics/deleteplastic/{id}", method=RequestMethod.GET)
 	public String deletePlastic(@PathVariable("id") Long plasticId) {
-		plasticService.delete(plasticService.getById(plasticId));
+		repository.delete(plasticService.getById(plasticId));
 		return "redirect:../plastics";
 	}
 }	

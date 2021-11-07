@@ -34,7 +34,7 @@ public class Company {
 	
 	public Company(String name) {
 		super();
-		this.name = name;
+		this.name = name.toLowerCase();
 	}
 
 	public Long getId() {
@@ -48,9 +48,13 @@ public class Company {
 	public String getName() {
 		return name;
 	}
+	
+	public String getCapitalizedName() {
+		return capitalize(name);
+	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.name = name.toLowerCase();
 	}
 
 	public List<Plastic> getPlastics() {

@@ -17,13 +17,8 @@
 		<div class="nav" th:replace="fragments/topnav :: navbar"></div>
 	</header>
 	
-	<div class="d-flex justify-content-between container">
-		
-		<div class="flex-item">
-			<div class="side-container"></div>
-		</div>
-		
-		<div class="flex-item table-container">
+	<div class="container main-container">
+		<div>
 			<h1>Companies</h1>
 			<p>Here you can find all companies.</p>
 			
@@ -33,50 +28,31 @@
 			</form>
 			
 			<form class="form-inline search-bar" action="#" th:action="@{/companies}" method="GET">
-				<input class="form-control mr-sm-2" type="search" placeholder="Search discs" aria-label="Search" name="keyword" id="txtSearch" />
+				<input class="form-control mr-sm-2" type="search" placeholder="Search companies" aria-label="Search" name="keyword" id="txtSearch" />
 				<button class="btn btn-outline-succes my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
 			</form>
 			
-			<table class="table table-dark table-striped table-hover list">
+			<table class="table table-dark table-striped table-hover">
 				
 				<tr>
-					<th></th>
 					<th>NAME</th>
-					<th></th>
-					<th></th>
-					<th></th>
-					<th></th>
-					<th></th>
-					<th></th>
-					<th></th>
-					<th></th>
-					<th></th>
-					<th></th>
 					<th sec:authorize="hasAuthority('ADMIN')"></th>
 					<th sec:authorize="hasAuthority('ADMIN')"></th>
 				</tr>	
 							
-				<tr th:each = "company : ${companies}">
-					<td></td>
-					<th><a class="link" th:href="@{/companies/company/{id}(id=${company.id})}" th:text="${company.name}"></a></th>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
+				<tr th:each = "c : ${companies}">
 
+					<th><a class="link-white" th:href="@{/companies/company/{id}(id=${c.id})}" th:text="${c.getCapitalizedName}"></a></th>
 					<td sec:authorize="hasAuthority('ADMIN')">
-						<a class="btn btn-success" th:href="@{/companies/edit/{id}(id=${company.id})}">Edit</a>
+						<form class="form-inline add-form" th:action="@{/companies/save/{id}(id=${c.id})}" action="#" method="post" sec:authorize="hasAuthority('ADMIN')">
+							<input class="form-control mr-sm-2" type="text" id="name" placeholder="Change the name" th:field="${company.name}" required/>
+							<button class="btn btn-success" type="submit" >Save</button>
+						</form>
 					</td>
 					<td sec:authorize="hasAuthority('ADMIN')">
 						<a 
 							class="btn btn-danger" 
-							th:href="@{/companies/delete/{id}(id=${company.id})}" 
+							th:href="@{/companies/delete/{id}(id=${c.id})}" 
 							onclick="return confirm('Are you sure you wish to delete')" >
 								Delete
 						</a>
@@ -86,10 +62,6 @@
 				
 			</table>
 			
-		</div>
-
-		<div class="flex-item">
-			<div class="side-container"></div>
 		</div>
 	</div>
 	

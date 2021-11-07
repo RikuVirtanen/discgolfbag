@@ -15,7 +15,7 @@
 					<a class="nav-link" href="/bags/mybag" >[[${#httpServletRequest.remoteUser}]]'s bag</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="/users">Users</a>
+					<a class="nav-link" href="/userlist">Users</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="/companies">Companies</a>
@@ -37,13 +37,12 @@
 				[[${#httpServletRequest.remoteUser}]]
 			</button>
 			<div class="dropdown-menu dropdown-menu-right">
-				<a class="dropdown-item" href="#">Profile</a>
-				<a class="dropdown-item" href="#">Settings</a>
-				<a class="dropdown-item" href="#">Customize</a>
+				<a class="dropdown-item" href="/users/profile">Profile</a>
 				<div class="dropdown-divider"></div>
-				<form class="form-inline" th:action="@{/logout}" method="post">
+				<a class="btn dropdown-item" href="/logout">Logout</a>
+				<!--  <form class="form-inline" th:action="@{/logout}" method="post">
 					<input type="submit" value="Sign Out" class="btn btn-sm"/>
-				</form>	
+				</form> -->	
 			</div>
 		</div>
 		

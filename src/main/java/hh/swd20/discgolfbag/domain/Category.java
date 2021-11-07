@@ -30,7 +30,7 @@ public class Category {
 	
 	public Category(String name) {
 		super();
-		this.name = name;
+		this.name = name.toLowerCase();
 	}
 
 	public Long getId() {
@@ -40,13 +40,17 @@ public class Category {
 	public void setId(Long id) {
 		this.id = id;
 	}
-
+	
 	public String getName() {
 		return name;
 	}
 
+	public String getCapitalizedName() {
+		return capitalize(name);
+	}
+
 	public void setName(String name) {
-		this.name = name;
+		this.name = name.toLowerCase();
 	}
 
 	public List<Disc> getDiscs() {
