@@ -6,7 +6,6 @@
 	<groupId>hh.swd20</groupId>
 	<artifactId>discgolfbag</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
 	
 	<name>discgolfbag</name>
 	<description>Demo project for Spring Boot</description>
