@@ -27,21 +27,25 @@ public class DiscgolfbagApplication {
 		SpringApplication.run(DiscgolfbagApplication.class, args);
 	}
 	
-	@Bean
-	public CommandLineRunner discgolfbagApp(DiscRepository dr,PlasticRepository pr, 
-			CategoryRepository catr, CompanyRepository comr, UserRepository ur, BagRepository DGBr) {
+	/*@Bean
+	public CommandLineRunner discgolfbagApp(DiscRepository dr,
+			PlasticRepository pr, 
+			CategoryRepository catr, 
+			CompanyRepository comr, 
+			UserRepository ur, 
+			BagRepository DGBr) {
 		return (args) -> {
 			
 			log.info("insert example data of disc types");
-			catr.save(new Category("Driver"));
-			catr.save(new Category("Fairway Driver"));
-			catr.save(new Category("Midrange"));
-			catr.save(new Category("Putter"));
+			catr.save(new Category("driver"));
+			catr.save(new Category("fairway Driver"));
+			catr.save(new Category("midrange"));
+			catr.save(new Category("putter"));
 			
-			comr.save(new Company("Innova"));
-			comr.save(new Company("Westside"));
-			comr.save(new Company("Discmania"));
-			comr.save(new Company("Latitude 64"));
+			comr.save(new Company("innova"));
+			comr.save(new Company("westside"));
+			comr.save(new Company("discmania"));
+			comr.save(new Company("latitude 64"));
 			
 			pr.save(new Plastic("Star", comr.findByName("innova").get()));
 			pr.save(new Plastic("Champion", comr.findByName("innova").get()));
@@ -50,17 +54,17 @@ public class DiscgolfbagApplication {
 			pr.save(new Plastic("BT Soft", comr.findByName("westside").get()));
 			pr.save(new Plastic("BT Hard", comr.findByName("westside").get()));
 			
-			dr.save(new Disc("Tern", "12", "6", "-3", "2", pr.findByName("star").get(), catr.findByName("driver").get(), comr.findByName("innova").get()));
-			dr.save(new Disc("Roc3", "5", "4", "0", "3", pr.findByName("champion").get(), catr.findByName("midrange").get(), comr.findByName("innova").get()));
-			dr.save(new Disc("Aviar", "12", "6", "-3", "2", pr.findByName("star").get(), catr.findByName("putter").get(), comr.findByName("innova").get()));
+			dr.save(new Disc("tern", "12", "6", "-3", "2", pr.findByName("star").get(), catr.findByName("driver").get(), comr.findByName("innova").get()));
+			dr.save(new Disc("roc3", "5", "4", "0", "3", pr.findByName("champion").get(), catr.findByName("midrange").get(), comr.findByName("innova").get()));
+			dr.save(new Disc("aviar", "12", "6", "-3", "2", pr.findByName("star").get(), catr.findByName("putter").get(), comr.findByName("innova").get()));
 			
-			dr.save(new Disc("Gladiator", "13", "5", "0", "3.5", pr.findByName("opto").get(), catr.findByName("driver").get(), comr.findByName("latitude 64").get()));
-			dr.save(new Disc("Explorer", "7", "5", "0", "2", pr.findByName("opto").get(), catr.findByName("fairway driver").get(), comr.findByName("latitude 64").get()));
-			dr.save(new Disc("Claymore", "5", "5", "-1", "1", pr.findByName("gold").get(), catr.findByName("midrange").get(), comr.findByName("latitude 64").get()));
+			dr.save(new Disc("gladiator", "13", "5", "0", "3.5", pr.findByName("opto").get(), catr.findByName("driver").get(), comr.findByName("latitude 64").get()));
+			dr.save(new Disc("explorer", "7", "5", "0", "2", pr.findByName("opto").get(), catr.findByName("fairway driver").get(), comr.findByName("latitude 64").get()));
+			dr.save(new Disc("claymore", "5", "5", "-1", "1", pr.findByName("gold").get(), catr.findByName("midrange").get(), comr.findByName("latitude 64").get()));
 			
-			dr.save(new Disc("Hatchet", "9", "6", "-2", "1", pr.findByName("bt soft").get(), catr.findByName("fairway driver").get(), comr.findByName("westside").get()));
-			dr.save(new Disc("Warship", "5", "6", "0", "1", pr.findByName("bt hard").get(), catr.findByName("midrange").get(), comr.findByName("westside").get()));
-			dr.save(new Disc("Swan 2", "3", "3", "-1", "0", pr.findByName("bt soft").get(), catr.findByName("putter").get(), comr.findByName("westside").get()));
+			dr.save(new Disc("hatchet", "9", "6", "-2", "1", pr.findByName("bt soft").get(), catr.findByName("fairway driver").get(), comr.findByName("westside").get()));
+			dr.save(new Disc("warship", "5", "6", "0", "1", pr.findByName("bt hard").get(), catr.findByName("midrange").get(), comr.findByName("westside").get()));
+			dr.save(new Disc("swan 2", "3", "3", "-1", "0", pr.findByName("bt soft").get(), catr.findByName("putter").get(), comr.findByName("westside").get()));
 			
 			log.info("save example users");
 			// Create users: admin/admin user/user
@@ -75,5 +79,5 @@ public class DiscgolfbagApplication {
 				log.info(u.toString());
 			}
 		};
-	}
+	}*/
 }
