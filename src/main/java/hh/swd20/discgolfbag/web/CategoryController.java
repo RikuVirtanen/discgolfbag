@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import hh.swd20.discgolfbag.domain.Category;
 import hh.swd20.discgolfbag.domain.CategoryRepository;
+import hh.swd20.discgolfbag.domain.Disc;
 import hh.swd20.discgolfbag.services.CategoryService;
 
 @CrossOrigin
@@ -27,17 +28,25 @@ public class CategoryController {
 	
 	/*********************** RESTFUL SERVICES *********************************/
 	
-	@RequestMapping(value = "/categories", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/categories", method = RequestMethod.GET)
 	public @ResponseBody List<Category> getCategoriesRest() {
 		return (List<Category>) repository.findAll();
 	}
 	
-	@RequestMapping(value = "/categories/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/categories/{id}", method = RequestMethod.GET)
 	public @ResponseBody Optional<Category> findCategoryRest(@PathVariable("id") Long categoryId) {
 		return repository.findById(categoryId);
 	}
 	
 	/************************************************************************/
+	
+	@PreAuthorize(value="hasAuthority('ADMIN')")
+	@RequestMapping(value="/categories", method = RequestMethod.GET)
+	public String categoryList(Model model) {
+		model.addAttribute("categories", categoryService.getAll());
+		model.addAttribute("category", new Category());
+		return "categorylist";
+	}
 	
 	@RequestMapping(value="/categories/addcategory", method=RequestMethod.GET)
 	public String addCategory(Model model) {
@@ -45,7 +54,7 @@ public class CategoryController {
 		return "addcategory"; //thymeleaf template
 	}
 	
-	@RequestMapping(value="/categories/savecategory", method=RequestMethod.POST)
+	@RequestMapping(value="/categories/save", method=RequestMethod.POST)
 	public String saveCategory(@ModelAttribute Category category) {
 		if(categoryService.getByName(category.capitalize(category.getName())) != null) {
 			return "redirect:/categories";
@@ -63,9 +72,14 @@ public class CategoryController {
 	}
 	
 	@PreAuthorize(value="hasAuthority('ADMIN')")
-	@RequestMapping(value="/categories/deletecategory/{id}", method=RequestMethod.GET)
+	@RequestMapping(value="/categories/delete/{id}", method=RequestMethod.GET)
 	public String deleteCategory(@PathVariable("id") Long categoryId) {
-		repository.delete(categoryService.getById(categoryId));
-		return "redirect:../companies";
+		Category category = categoryService.getById(categoryId);
+		List<Disc> discs = category.getDiscs();
+		for(Disc disc : discs) {
+			disc.setCategory(null);
+		}
+		repository.delete(category);
+		return "redirect:/categories";
 	}
 }

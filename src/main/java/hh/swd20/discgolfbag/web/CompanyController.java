@@ -33,18 +33,18 @@ public class CompanyController {
 	
 	/******************************** RESTFUL SERVICES *****************************************/
 	
-	@RequestMapping(value = "/companies", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/companies", method = RequestMethod.GET)
 	public @ResponseBody List<Company> getCompaniesRest() {
 		return (List<Company>) repository.findAll();
 	}
 	
-	@RequestMapping(value = "/companies/{id}", method=RequestMethod.GET)
+	@RequestMapping(value = "/api/companies/{id}", method=RequestMethod.GET)
 	public @ResponseBody Optional<Company> getCompanyByIdRest(@PathVariable("id") Long companyId) {
 		return repository.findById(companyId);
 	}
 	
 	@PreAuthorize(value="hasAuthority('ADMIN')")
-	@RequestMapping(value = "/companies", method = RequestMethod.POST)
+	@RequestMapping(value = "/api/companies", method = RequestMethod.POST)
 	public @ResponseBody void saveCompanyRest(@RequestBody Company company) {
 		repository.save(company);
 	}
