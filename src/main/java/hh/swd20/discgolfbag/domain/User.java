@@ -44,7 +44,7 @@ public class User {
 		this.email = null;
 		this.passwordHash = null;
 		this.role = null;
-		this.bag = new Bag(username + "'s bag", "default", this);
+		this.bag = null;
 	}
 	
 	public User(String username, String email, String passwordHash, String role) {
@@ -53,7 +53,7 @@ public class User {
 		this.email = email;
 		this.passwordHash = passwordHash;
 		this.role = role;
-		this.bag = new Bag(username + "'s bag", "default", this);
+		this.bag = null;
 	}
 
 	public Long getId() {

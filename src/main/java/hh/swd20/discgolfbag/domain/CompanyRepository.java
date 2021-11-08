@@ -2,11 +2,11 @@ package hh.swd20.discgolfbag.domain;
 
 import java.util.Optional;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-public interface CompanyRepository extends JpaRepository<Company, Long> {
+public interface CompanyRepository extends CrudRepository<Company, Long> {
 	
 	public Optional<Company> findById(@Param("id") Long id);
 	

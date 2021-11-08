@@ -41,7 +41,7 @@ public class Disc {
 	
 	@ManyToOne
 	//@JsonIgnore
-	@JsonIgnoreProperties("discs")
+	@JsonIgnoreProperties({"discs", "plastics"})
 	@JoinColumn(name = "companyid", referencedColumnName = "id")
 	private Company company;
 	

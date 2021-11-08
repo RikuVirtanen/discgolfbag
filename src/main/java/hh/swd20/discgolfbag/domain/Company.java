@@ -9,7 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Company {
@@ -19,12 +19,14 @@ public class Company {
 	private Long id;
 	private String name;
 	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "company" )
-	@JsonIgnoreProperties({"company", "discs"})
+	//@JsonIgnoreProperties({"company", "discs"})
 	private List<Plastic> plastics;
 	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "company" )
-	@JsonIgnoreProperties({"company", "discs"})
+	//@JsonIgnoreProperties({"company", "discs"})
 	private List<Disc> discs;
 	
 	public Company() {

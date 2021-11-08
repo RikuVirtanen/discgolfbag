@@ -1,8 +1,5 @@
 package hh.swd20.discgolfbag.web;
 
-import java.util.List;
-import java.util.Optional;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +10,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import hh.swd20.discgolfbag.domain.Bag;
 import hh.swd20.discgolfbag.domain.BagRepository;
@@ -31,6 +29,7 @@ import hh.swd20.discgolfbag.services.UserService;
 
 @CrossOrigin
 @Controller
+@RequestMapping("/users")
 public class UserController {
 	
 	// REPOSITORIES
@@ -40,36 +39,10 @@ public class UserController {
 	@Autowired private BagService bagService;
 	@Autowired private UserService userService;
 	@Autowired private DiscService discService;
-	@Autowired private UserRepository userRepository;
 	@Autowired private BagRepository bagRepository;
 	
-	/********************* RESTFUL SERVICES *********************************/
-	
-	@RequestMapping(value="/users", method = RequestMethod.GET)
-	public @ResponseBody List <User> findUsersRest() {
-		return (List<User>) repository.findAll();
-	}
-	
-	@RequestMapping(value="/users/bag/{id}", method = RequestMethod.GET)
-	public @ResponseBody Optional <Bag> findDGBagByUserId(@PathVariable("id") Long userId) {
-		return bagRepository.findBagByUserId(userId);
-	}
-
-	@RequestMapping(value="/users/{id}", method = RequestMethod.GET)
-	public @ResponseBody Optional<User> findUserById(@PathVariable("id") Long userId) {
-		return userRepository.findById(userId);
-	}
-	
-	@RequestMapping(value="/users/username", method = RequestMethod.GET)
-	@ResponseBody
-	public String currentUsername(Authentication auth) {
-		return auth.getName();
-	}
-	
-	/************************************************************************/
-	
-	@RequestMapping(value = "/saveuser", method = RequestMethod.POST)
-	public String save(@Valid @ModelAttribute("signupform") SignupForm signupForm, BindingResult bindingResult) {
+	@PostMapping("/save")
+	public String save(@Valid @ModelAttribute("signupform") SignupForm signupForm, BindingResult bindingResult, Authentication auth) {
 		if (!bindingResult.hasErrors()) {
 			if(signupForm.getPassword().equals(signupForm.getPasswordCheck())) {
 				String pwd = signupForm.getPassword();
@@ -82,11 +55,13 @@ public class UserController {
 				newUser.setEmail(signupForm.getEmail());
 				newUser.setRole("USER");
 
-				if(userRepository.findByUsername(newUser.getUsername()).isEmpty()) {
+				if(repository.findByUsername(newUser.getUsername()).isEmpty()) {
 					
-					if(userRepository.findByEmail(newUser.getEmail()).isEmpty()) {
+					if(repository.findByEmail(newUser.getEmail()).isEmpty()) {
+						Bag bag = new Bag(newUser.getUsername() + "'s bag", "default", newUser);
+						bagRepository.save(bag);
+						newUser.setBag(bag);
 						userService.save(newUser);
-						
 					} 
 					else {
 						bindingResult.rejectValue("email", "err.email", "User with this email already exists!");
@@ -106,10 +81,15 @@ public class UserController {
 		else {
 			return "signup";
 		}
-		return "redirect:/login";
+		if(auth.isAuthenticated()) {
+			return "redirect:/userlist";
+		} else {
+			return "redirect:/login";
+		}
+		
 	}
 	
-	@RequestMapping(value = "/users/adminsavenewuser", method = RequestMethod.POST)
+	/*@RequestMapping(value = "/users/savenew", method = RequestMethod.POST)
 	public String adminSaveNewUser(@Valid @ModelAttribute("signupform") SignupForm signupForm, BindingResult bindingResult) {
 		
 		if (!bindingResult.hasErrors()) {
@@ -125,9 +105,13 @@ public class UserController {
 				newUser.setEmail(signupForm.getEmail());
 				newUser.setRole(signupForm.getRole());
 				
-				if(userRepository.findByUsername(newUser.getUsername()).isEmpty()) {				
+				if(repository.findByUsername(newUser.getUsername()).isEmpty()) {				
 					
-					if(userRepository.findByEmail(newUser.getEmail()).isEmpty()) {
+					if(repository.findByEmail(newUser.getEmail()).isEmpty()) {
+						userService.save(newUser);
+						Bag bag = new Bag(newUser.getUsername() + "'s bag", "default", newUser);
+						bagRepository.save(bag);
+						newUser.setBag(bag);
 						userService.save(newUser);
 					} 
 					else {
@@ -149,17 +133,16 @@ public class UserController {
 			return "adduser";
 		}
 		return "redirect:/userlist";
-	}
+	}*/
 	
-	@RequestMapping(value = "/users/saveolduser", method = RequestMethod.POST)
+	@PostMapping("/update")
 	public String saveOldUser(@ModelAttribute User user) {
 		userService.save(user);
 		return "redirect:/userlist";
 	}
 	
-	@RequestMapping(value = "/userlist", method = RequestMethod.GET)
+	@GetMapping("/userlist")
 	public String listUsers(Model model, String keyword) {
-		
 		if(keyword != null) {
 			model.addAttribute("users", userService.findByKeyword(keyword));
 		} else {
@@ -169,21 +152,21 @@ public class UserController {
 	}
 	
 	@PreAuthorize(value = "hasAuthority('ADMIN')")
-	@RequestMapping(value="/users/adduser", method = RequestMethod.GET)
+	@GetMapping("/adduser")
 	public String addUser(Model model) {
 		model.addAttribute("signupform", new SignupForm());
 		return "adduser";
 	}
 	
 	@PreAuthorize(value = "hasAuthority('ADMIN')")
-	@RequestMapping(value="/users/edituser/{id}", method = RequestMethod.GET)
+	@GetMapping("/edit/{id}")
 	public String editUser(@PathVariable("id") Long userId, Model model) {
 		model.addAttribute("user", userService.getById(userId));
 		return "edituser";
 	}
 	
 	@PreAuthorize(value = "hasAuthority('ADMIN')")
-	@RequestMapping(value="/users/deleteuser/{id}", method = RequestMethod.GET)
+	@GetMapping("/delete/{id}")
 	public String deleteUser(@PathVariable("id") Long userId, Model model) {
 		bagService.delete(bagService.getBagByUserId(userId));
 		userService.delete(userService.getById(userId));
@@ -201,14 +184,14 @@ public class UserController {
 			discService.save(disc);
 			bag.addDisc(disc);
 			bagService.save(bag);
-		} 
+		}
 		model.addAttribute("userid", userId);
 		
-		return "redirect:/bags/mybag/{userid}";
+		return "redirect:/bags/{userid}";
 	}
 	
 	@PreAuthorize(value = "hasAnyAuthority('USER', 'ADMIN')")
-	@RequestMapping(value = "/users/profile", method = RequestMethod.GET)
+	@GetMapping("/profile")
 	public String userProfile(Authentication auth, Model model) {
 		User user = userService.getByUsername(auth.getName());
 		model.addAttribute("user", user);

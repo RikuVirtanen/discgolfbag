@@ -43,8 +43,8 @@
 					<th>COMPANY</th>
 					<th></th>
 					<th th:if="${me}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')"></th>
-					<th th:if="${user} and ${bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')"></th>
-					<th th:unless="${user} and ${bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')"></th>
+					<th th:if="${user == me} and ${bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')"></th>
+					<th th:unless="${user == me} and ${bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')"></th>
 				</tr>
 				<tr th:each = "disc : ${bag}">
 					<td></td>
@@ -61,10 +61,10 @@
 					<td th:if="${me}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
 						<a class="btn btn-warning" th:href="@{/bags/remove/{id}(id=${disc.id})}" >Remove</a>
 					</td>
-					<td th:if="${user} and ${!bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
+					<td th:if="${user != me} and ${!bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
 						<a class="btn btn-success" th:href="@{/users/{userid}/add/{discid}(userid=${user.id}, discid=${disc.id})}" >Add</a>
 					</td>
-					<td th:unless="${user} and ${!bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
+					<td th:unless="${user != me} and ${!bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
 					</td>
 					
 				</tr>
