@@ -18,14 +18,12 @@ import hh.swd20.discgolfbag.domain.Disc;
 import hh.swd20.discgolfbag.domain.DiscRepository;
 import hh.swd20.discgolfbag.domain.Plastic;
 import hh.swd20.discgolfbag.domain.PlasticRepository;
-import hh.swd20.discgolfbag.services.CompanyService;
 
 @CrossOrigin
 @Controller
 @RequestMapping(value = "/companies")
 public class CompanyController {
 	
-	@Autowired private CompanyService companyService;
 	@Autowired private CompanyRepository repository;
 	@Autowired private PlasticRepository plasticRepository;
 	@Autowired private DiscRepository discRepository;
@@ -35,7 +33,7 @@ public class CompanyController {
 		if(keyword != null ) {
 			model.addAttribute("companies", repository.findByKeyword(keyword.toLowerCase()));
 		} else {
-			model.addAttribute("companies", companyService.getAll());
+			model.addAttribute("companies", repository.findAll());
 		}
 		model.addAttribute("company", new Company());
 		return "companylist"; //thymeleaf template
@@ -60,7 +58,7 @@ public class CompanyController {
 	@GetMapping("/company/{id}")
 	public String companyInfo(@PathVariable("id") Long companyId, Model model) {
 		model.addAttribute("plastic", new Plastic());
-		Company company = companyService.getById(companyId);
+		Company company = repository.findById(companyId).get();
 		model.addAttribute("plastics", company.getPlastics());
 		model.addAttribute("company", company);
 		return "company";
@@ -69,7 +67,7 @@ public class CompanyController {
 	@PreAuthorize(value="hasAuthority('ADMIN')")
 	@PostMapping({"/company/{id}/saveplastic", "/company/{id}/saveplastic/{plasticid}"})
 	public String savePlastic(@PathVariable("id") Long companyId, @PathVariable(required=false) Long plasticId, Model model, Plastic plastic) {
-		Company company = companyService.getById(companyId);
+		Company company = repository.findById(companyId).get();
 		if(plasticId != null) {
 			Plastic oldPlastic = plasticRepository.findById(plasticId).get();
 			oldPlastic.setName(oldPlastic.getName().toLowerCase());
@@ -77,7 +75,7 @@ public class CompanyController {
 			return "redirect:/companies/company/{id}";
 		}
 		
-		else if(companyService.getById(companyId).getPlastics().contains(plastic)) {
+		else if(repository.findById(companyId).get().getPlastics().contains(plastic)) {
 			return "redirect:/companies/company/{id}";
 		}
 		else {
@@ -103,7 +101,7 @@ public class CompanyController {
 	@PreAuthorize(value="hasAuthority('ADMIN')")
 	@GetMapping("/delete/{id}")
 	public String deleteCompany(@PathVariable("id") Long companyId) {
-		Company company = companyService.getById(companyId);
+		Company company = repository.findById(companyId).get();
 		List<Disc> discs = company.getDiscs();
 		for(Disc disc : discs) {
 			disc.setCompany(null);
@@ -113,7 +111,7 @@ public class CompanyController {
 		for(Plastic plastic : plastics) {
 			plasticRepository.delete(plastic);
 		}
-		companyService.delete(company);
+		repository.delete(company);
 		
 		return "redirect:/companies";
 	}

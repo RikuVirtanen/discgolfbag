@@ -14,8 +14,7 @@ import hh.swd20.discgolfbag.domain.BagRepository;
 import hh.swd20.discgolfbag.domain.Disc;
 import hh.swd20.discgolfbag.domain.DiscRepository;
 import hh.swd20.discgolfbag.domain.User;
-import hh.swd20.discgolfbag.services.DiscService;
-import hh.swd20.discgolfbag.services.UserService;
+import hh.swd20.discgolfbag.domain.UserRepository;
 
 @CrossOrigin
 @Controller
@@ -24,9 +23,7 @@ public class BagController {
 	
 	@Autowired private BagRepository repository;
 	@Autowired private DiscRepository discRepository;
-	
-	@Autowired private UserService userService;
-	@Autowired private DiscService discService;
+	@Autowired private UserRepository userRepository;
 	
 	
 	/*@PreAuthorize(value = "hasAnyAuthority('USER', 'ADMIN')")
@@ -42,8 +39,8 @@ public class BagController {
 	@PreAuthorize(value = "hasAnyAuthority('USER', 'ADMIN')")
 	@GetMapping("/remove/{id}")
 	public String removeDiscFromBag(@PathVariable("id") Long discId, Authentication auth) {
-		Disc disc = discService.getById(discId);
-		User user = userService.getByUsername(auth.getName());
+		Disc disc = discRepository.findById(discId).get();
+		User user = userRepository.findByUsername(auth.getName());
 		Bag bag = user.getBag();
 		bag.getDiscs().remove(disc);
 		repository.save(bag);

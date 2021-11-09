@@ -50,13 +50,6 @@
 						<input id="password-check" type="password" th:field="*{passwordCheck}" class="form-control" placeholder="Re-type password" required />
 						<p th:if="${#fields.hasErrors('passwordCheck')}" th:errors="*{passwordCheck}">Password Match Error</p>	
 					</div>
-					<div>
-						<label for="role">Role</label>
-						<select id="role" th:field="*{role}" class="form-control" style="max-width: 100px">
-							<option selected value="USER">USER</option>
-							<option value="ADMIN">ADMIN</option>
-						</select>
-					</div>
 					<div class="clear-3"></div>
 					<input type="submit" class="btn btn-primary mr-sm-2" value="Signup"></input>		
 				</form>

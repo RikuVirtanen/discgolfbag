@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import hh.swd20.discgolfbag.domain.Category;
 import hh.swd20.discgolfbag.domain.CategoryRepository;
 import hh.swd20.discgolfbag.domain.Disc;
-import hh.swd20.discgolfbag.services.CategoryService;
 
 @CrossOrigin
 @Controller
@@ -24,12 +23,11 @@ import hh.swd20.discgolfbag.services.CategoryService;
 public class CategoryController {
 	
 	@Autowired private CategoryRepository repository;
-	@Autowired private CategoryService categoryService;
 	
 	@PreAuthorize(value="hasAuthority('ADMIN')")
 	@GetMapping("")
 	public String categoryList(Model model) {
-		model.addAttribute("categories", categoryService.getAll());
+		model.addAttribute("categories", repository.findAll());
 		model.addAttribute("category", new Category());
 		return "categorylist";
 	}
@@ -43,14 +41,14 @@ public class CategoryController {
 	@PreAuthorize(value="hasAuthority('ADMIN')")
 	@GetMapping("/edit/{id}")
 	public String editCategory(@PathVariable("id") Long categoryId, Model model) {
-		model.addAttribute("category", categoryService.getById(categoryId));
+		model.addAttribute("category", repository.findById(categoryId));
 		return "editcategory"; //thymeleaf template
 	}
 	
 	@PreAuthorize(value="hasAuthority('ADMIN')")
 	@GetMapping("/delete/{id}")
 	public String deleteCategory(@PathVariable("id") Long categoryId) {
-		Category category = categoryService.getById(categoryId);
+		Category category = repository.findById(categoryId).get();
 		List<Disc> discs = category.getDiscs();
 		for(Disc disc : discs) {
 			disc.setCategory(null);
@@ -61,7 +59,7 @@ public class CategoryController {
 	
 	@RequestMapping(value="/categories/save", method=RequestMethod.POST)
 	public String saveCategory(@ModelAttribute Category category) {
-		if(categoryService.getByName(category.capitalize(category.getName())) != null) {
+		if(repository.findByName(category.capitalize(category.getName())).isEmpty()) {
 			return "redirect:/categories";
 		}
 		category.setName(category.capitalize(category.getName()));

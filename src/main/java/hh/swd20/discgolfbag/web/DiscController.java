@@ -16,14 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import hh.swd20.discgolfbag.domain.Bag;
 import hh.swd20.discgolfbag.domain.BagRepository;
+import hh.swd20.discgolfbag.domain.CategoryRepository;
+import hh.swd20.discgolfbag.domain.CompanyRepository;
 import hh.swd20.discgolfbag.domain.Disc;
 import hh.swd20.discgolfbag.domain.DiscRepository;
-import hh.swd20.discgolfbag.services.BagService;
-import hh.swd20.discgolfbag.services.CategoryService;
-import hh.swd20.discgolfbag.services.CompanyService;
-import hh.swd20.discgolfbag.services.DiscService;
-import hh.swd20.discgolfbag.services.PlasticService;
-import hh.swd20.discgolfbag.services.UserService;
+import hh.swd20.discgolfbag.domain.PlasticRepository;
+import hh.swd20.discgolfbag.domain.UserRepository;
 
 @CrossOrigin
 @Controller
@@ -32,22 +30,19 @@ public class DiscController {
 	
 	@Autowired private DiscRepository repository;
 	@Autowired private BagRepository bagRepository;
-	
-	@Autowired private DiscService discService;
-	@Autowired private UserService userService;
-	@Autowired private PlasticService plasticService;
-	@Autowired private CategoryService categoryService;
-	@Autowired private CompanyService companyService;
-	@Autowired private BagService bagService;
+	@Autowired private UserRepository userRepository;
+	@Autowired private CategoryRepository categoryRepository;
+	@Autowired private CompanyRepository companyRepository;
+	@Autowired private PlasticRepository plasticRepository;
 	
 	@GetMapping("")
 	public String storage(Model model, String keyword, Authentication auth) {
 		if(keyword != null ) {
 			model.addAttribute("discs", repository.findByKeyword(keyword.toLowerCase()));
 		} else {
-			model.addAttribute("discs", discService.getDiscs());
+			model.addAttribute("discs", repository.findAll());
 		}
-		model.addAttribute("bag", bagService.getBagByUserId(userService.getByUsername(auth.getName()).getId()).getDiscs());
+		model.addAttribute("bag", bagRepository.findBagByUserId(userRepository.findByUsername(auth.getName()).getId()).get().getDiscs());
 		return "storage";
 	}
 	
@@ -68,9 +63,9 @@ public class DiscController {
 	@GetMapping("/add")
 	public String addNewDisc(Model model) {
 		model.addAttribute("disc", new Disc());
-		model.addAttribute("categories", categoryService.getAll());
-		model.addAttribute("companies", companyService.getAll());
-		model.addAttribute("plastics", plasticService.getAll());
+		model.addAttribute("categories", categoryRepository.findAll());
+		model.addAttribute("companies", companyRepository.findAll());
+		model.addAttribute("plastics", plasticRepository.findAll());
 		
 		return "discadd";
 	}
@@ -78,9 +73,9 @@ public class DiscController {
 	@PreAuthorize(value = "hasAnyAuthority('USER', 'ADMIN')")
 	@GetMapping("/addtobag/{id}")
 	public String addDiscToBag(@PathVariable("id") Long discId, Authentication auth) {
-		Disc disc = discService.getById(discId);
-		Long userId = userService.getByUsername(auth.getName()).getId();
-		Bag bag = bagService.getBagByUserId(userId);
+		Disc disc = repository.findById(discId).get();
+		Long userId = userRepository.findByUsername(auth.getName()).getId();
+		Bag bag = bagRepository.findBagByUserId(userId).get();
 		if (!bag.getDiscs().contains(disc)) {
 			disc.addToBag(bag);
 			repository.save(disc);
@@ -94,10 +89,10 @@ public class DiscController {
 	@PreAuthorize(value = "hasAuthority('ADMIN')")
 	@GetMapping("/edit/{id}")
 	public String editDisc(@PathVariable("id") Long discId, Model model) {
-		model.addAttribute("disc", discService.getById(discId));
-		model.addAttribute("categories", categoryService.getAll());
-		model.addAttribute("companies", companyService.getAll());
-		model.addAttribute("plastics", plasticService.getAll());
+		model.addAttribute("disc", repository.findById(discId));
+		model.addAttribute("categories", categoryRepository.findAll());
+		model.addAttribute("companies", companyRepository.findAll());
+		model.addAttribute("plastics", plasticRepository.findAll());
 		return "editdisc";
 	}
 	
@@ -105,15 +100,15 @@ public class DiscController {
 	@PreAuthorize(value = "hasAuthority('ADMIN')")
 	@GetMapping("/delete/{id}")
 	public String deleteDisc(@PathVariable("id") Long discId) {
-		Disc disc = discService.getById(discId);
-		List<Bag> bags = bagService.getAll();
+		Disc disc = repository.findById(discId).get();
+		List<Bag> bags = (List<Bag>) bagRepository.findAll();
 		for(Bag b: bags) {
 			if (b.getDiscs().contains(disc)) {
 				b.getDiscs().remove(disc);
-				bagService.save(b);
+				bagRepository.save(b);
 			}
 		}
-		discService.delete(disc);
+		repository.delete(disc);
 		return "redirect:/discs";
 	}
 	

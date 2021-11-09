@@ -17,7 +17,6 @@ import hh.swd20.discgolfbag.domain.Bag;
 import hh.swd20.discgolfbag.domain.BagRepository;
 import hh.swd20.discgolfbag.domain.Disc;
 import hh.swd20.discgolfbag.domain.DiscRepository;
-import hh.swd20.discgolfbag.services.BagService;
 
 @CrossOrigin
 @RestController
@@ -26,7 +25,6 @@ public class RestBagController {
 	
 	@Autowired private BagRepository repository;
 	@Autowired private DiscRepository discRepository;
-	@Autowired private BagService service;
 
 	@GetMapping("")
 	public List<Bag> getBagsRest() {
@@ -41,7 +39,7 @@ public class RestBagController {
 	@PreAuthorize(value = "hasAuthority('ADMIN')")
 	@GetMapping("/delete/{id}")
 	public void deleteBagRest(@PathVariable("id") Long id) {
-		Bag bag = service.getById(id);
+		Bag bag = repository.findById(id).get();
 		for(Disc disc : bag.getDiscs()) {
 			disc.removeFromBag(bag);
 			discRepository.save(disc);
