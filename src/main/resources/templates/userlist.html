@@ -49,15 +49,15 @@
 						<td th:text="${user.username}"></td>
 						<td th:text="${user.email}"></td>
 						<td th:text="${user.role}"></td>
-						<td><a class="btn btn-success" th:href="@{/bags/mybag/{id}(id=${user.id})}">bag</a><td>
+						<td><a class="btn btn-success" th:href="@{/users/bag/{id}(id=${user.id})}">bag</a><td>
 						<td></td>
 						<td sec:authorize="hasAuthority('ADMIN')">
-							<a class="btn btn-success" th:href="@{/users/edituser/{id}(id=${user.id})}" >Edit</a>
+							<a class="btn btn-success" th:href="@{/users/edit/{id}(id=${user.id})}" >Edit</a>
 						</td>
 						<td sec:authorize="hasAuthority('ADMIN')">
 							<a 
 								class="btn btn-danger" 
-								th:href="@{/users/deleteuser/{id}(id=${user.id})}" 
+								th:href="@{/users/delete/{id}(id=${user.id})}" 
 								onclick="return confirm('Are you sure you wish to delete')" >
 									Delete
 							</a>

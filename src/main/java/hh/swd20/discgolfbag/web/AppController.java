@@ -16,11 +16,11 @@ public class AppController {
 	}
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String main() {
+	public String main(Model model) {
 		return "index";
 	}
 	
-	@RequestMapping(value = "/signup", method = RequestMethod.GET)
+	@RequestMapping(value = "signup", method = RequestMethod.GET)
 	public String signUser(Model model) {
 		model.addAttribute("signupform", new SignupForm());
 		return "signup";

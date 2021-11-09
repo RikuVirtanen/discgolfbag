@@ -17,13 +17,13 @@
 						<a class="nav-link" href="/">Main <span class="sr-only">(current)</span></a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="/discs/storage">Storage <span class="sr-only">(current)</span></a>
+						<a class="nav-link" href="/discs">Storage <span class="sr-only">(current)</span></a>
 					</li>
 					<li class="nav-item" sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
-						<a class="nav-link" href="/bags/mybag" >[[${#httpServletRequest.remoteUser}]]'s bag</a>
+						<a class="nav-link" href="/users/bag" >[[${#httpServletRequest.remoteUser}]]'s bag</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="/userlist">Users</a>
+						<a class="nav-link" href="/users">Users</a>
 					</li>
 					<li class="nav-item">
 						<a class="nav-link" href="/companies">Companies</a>

@@ -76,7 +76,7 @@ public class DiscController {
 	}
 	
 	@PreAuthorize(value = "hasAnyAuthority('USER', 'ADMIN')")
-	@PostMapping("/addtobag/{id}")
+	@GetMapping("/addtobag/{id}")
 	public String addDiscToBag(@PathVariable("id") Long discId, Authentication auth) {
 		Disc disc = discService.getById(discId);
 		Long userId = userService.getByUsername(auth.getName()).getId();

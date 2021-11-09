@@ -20,7 +20,7 @@ import hh.swd20.discgolfbag.services.CategoryService;
 
 @CrossOrigin
 @Controller
-@RequestMapping(value = "/categories", method = RequestMethod.GET)
+@RequestMapping(value = "/categories")
 public class CategoryController {
 	
 	@Autowired private CategoryRepository repository;

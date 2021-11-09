@@ -1,7 +1,6 @@
 package hh.swd20.discgolfbag.services;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,10 +21,6 @@ import hh.swd20.discgolfbag.domain.UserRepository;
 	}
 	
 	public User getByUsername(String username) {
-		return repository.findByUsername(username).get();
-	}
-	
-	public Optional <User> findByUsername(String username) {
 		return repository.findByUsername(username);
 	}
 	

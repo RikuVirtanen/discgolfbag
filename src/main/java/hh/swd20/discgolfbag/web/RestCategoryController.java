@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +19,7 @@ import hh.swd20.discgolfbag.domain.CategoryRepository;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/api", method = RequestMethod.GET)
+@RequestMapping(value = "/api")
 public class RestCategoryController {
 
 	@Autowired private CategoryRepository repository;
@@ -36,5 +37,11 @@ public class RestCategoryController {
 	@RequestMapping(value = "/api/categories", method = RequestMethod.POST)
 	public @ResponseBody void saveRest(@RequestBody Category category) {
 		repository.save(category);
+	}
+	
+	@PreAuthorize(value="hasAuthority('ADMIN')")
+	@GetMapping("/delete/{id}")
+	public void deleteCategoryRest(@PathVariable("id") Long id) {
+		repository.delete(repository.findById(id).get());
 	}
 }

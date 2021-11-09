@@ -39,14 +39,14 @@ public class RestBagController {
 	}
 	
 	@PreAuthorize(value = "hasAuthority('ADMIN')")
-	@GetMapping("/{id}/delete")
+	@GetMapping("/delete/{id}")
 	public void deleteBagRest(@PathVariable("id") Long id) {
 		Bag bag = service.getById(id);
 		for(Disc disc : bag.getDiscs()) {
 			disc.removeFromBag(bag);
 			discRepository.save(disc);
 		}
-		repository.deleteById(id);
+		repository.delete(bag);
 	}
 	
 	@PreAuthorize(value = "hasAuthority('ADMIN')")

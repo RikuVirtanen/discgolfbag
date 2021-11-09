@@ -10,7 +10,7 @@ import org.springframework.data.rest.core.annotation.RestResource;
 
 public interface UserRepository extends CrudRepository<User, Long> {
 
-	@RestResource public Optional<User> findByUsername(@Param("name") String username);
+	public User findByUsername(String username);
 	
 	@RestResource public Optional<User> findByEmail(@Param("email") String email);
 	

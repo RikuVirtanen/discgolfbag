@@ -10,7 +10,7 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <link type="text/css" rel="stylesheet" href="/css/styles.css" th:href="@{/css/styles.css}" /> 
 <script src="https://kit.fontawesome.com/17a4ce7e95.js"></script>
-<title>Insert title here</title>
+<title>Add new user</title>
 </head>
 <body>
 	<header>
@@ -24,23 +24,29 @@
 		<div class="flex-item login-container">
 			<div class="content">
 				<div>
-					<h2>Signup</h2>
+					<h2>Add new user</h2>
 				</div>
-				<form th:object="${signupform}" th:action="@{/users/adminsavenewuser}" action="#" method="post">
+				<form th:object="${signupform}" th:action="@{/users/createuser}" action="#" method="post">
 					<div>
-						<label> Username :<input type="text" th:field="*{username}" class="form-control" placeholder="Username" required /></label>
+						<label for="username"> Username :</label>
+						<input id="username" type="text" th:field="*{username}" class="form-control" placeholder="Username" required />
+						<small class="input-helper">Usernames are set to lower case!</small>
 						<p th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username Error</p>	
 					</div>
 					<div>
-						<label> Email :<input type="email" th:field="*{email}" class="form-control" placeholder="E-mail" required /></label>
+						<label for="email"> Email :</label>
+						<input id="email" type="email" th:field="*{email}" class="form-control" placeholder="E-mail" required />
 						<p th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</p>	
 					</div>
 					<div>
-						<label> Password :<input type="password" th:field="*{password}" class="form-control" placeholder="Password" required /></label>
+						<label for="password"> Password :</label>
+						<input id="password" type="password" th:field="*{password}" class="form-control" placeholder="Password" required />
+						<small class="input-helper">Password must be 7 to 30 characters long!</small>
 						<p th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</p>	
 					</div>
 					<div>
-						<label> Re-type Password: <input type="password" th:field="*{passwordCheck}" class="form-control" placeholder="Re-type password" required /></label>
+						<label for="password-check"> Re-type Password: </label>
+						<input id="password-check" type="password" th:field="*{passwordCheck}" class="form-control" placeholder="Re-type password" required />
 						<p th:if="${#fields.hasErrors('passwordCheck')}" th:errors="*{passwordCheck}">Password Match Error</p>	
 					</div>
 					<div>
@@ -50,8 +56,8 @@
 							<option value="ADMIN">ADMIN</option>
 						</select>
 					</div>
-					
-					<input type="submit" class="btn btn-primary" value="Signup"></input>		
+					<div class="clear-3"></div>
+					<input type="submit" class="btn btn-primary mr-sm-2" value="Signup"></input>		
 				</form>
 			</div>
 		</div>

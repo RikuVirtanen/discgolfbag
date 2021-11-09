@@ -19,29 +19,36 @@ import hh.swd20.discgolfbag.domain.UserRepository;
 
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/api", method = RequestMethod.GET)
+@RequestMapping(value = "/api/users", method = RequestMethod.GET)
 public class RestUserController {
 	
 	@Autowired private UserRepository repository;
 	
-	@GetMapping("/users")
+	@GetMapping("")
 	public List <User> findUsersRest() {
 		return (List<User>) repository.findAll();
 	}
 
-	@GetMapping("/users/{id}")
+	@GetMapping("/{id}")
 	public Optional<User> findUserById(@PathVariable("id") Long userId) {
 		return repository.findById(userId);
 	}
 	
-	@GetMapping("/users/username")
+	@GetMapping("/username")
 	public String currentUsername(Authentication auth) {
 		return auth.getName();
+	}
+	
+	@GetMapping("/delete/{id}")
+	public void deleteUserRest(@PathVariable("id") Long id) {
+		repository.delete(repository.findById(id).get());
 	}
 	
 	@RequestMapping(value = "/api/users", method = RequestMethod.POST)
 	public @ResponseBody void saveRest(@RequestBody User user) {
 		repository.save(user);
 	}
+	
+	
 
 }

@@ -35,10 +35,10 @@ public class Bag {
 		this.color = null;
 	}
 	
-	public Bag(String name, String color, User user) {
+	public Bag(User user) {
 		super();
-		this.name = name;
-		this.color = color;
+		this.name = user.getUsername() + "'s bag";
+		this.color = "default";
 		this.user = user;
 	}
 

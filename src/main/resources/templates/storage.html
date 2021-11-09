@@ -67,17 +67,17 @@
 					<td th:text="${disc.speed} + ' | ' + ${disc.glide} + ' | ' + ${disc.turn} + ' | ' + ${disc.fade}"></td>
 					<td></td>
 					<td th:if="${!bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
-						<a class="btn btn-success" th:href="@{/discs/storage/addtobag/{id}(id=${disc.id})}" >Add</a>
+						<a class="btn btn-success" th:href="@{/discs/addtobag/{id}(id=${disc.id})}" >Add</a>
 					</td>
 					<td th:if="${bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
 					</td>
 					<td sec:authorize="hasAuthority('ADMIN')">
-						<a class="btn btn-success" th:href="@{/discs/storage/editdisc/{id}(id=${disc.id})}" >Edit</a>
+						<a class="btn btn-success" th:href="@{/discs/edit/{id}(id=${disc.id})}" >Edit</a>
 					</td>
 					<td sec:authorize="hasAuthority('ADMIN')">
 						<a 
 							class="btn btn-danger" 
-							th:href="@{/discs/storage/deletedisc/{id}(id=${disc.id})}" 
+							th:href="@{/discs/delete/{id}(id=${disc.id})}" 
 							onclick="return confirm('Are you sure you wish to delete')" >
 								Delete
 						</a>

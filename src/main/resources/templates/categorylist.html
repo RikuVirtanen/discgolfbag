@@ -22,7 +22,7 @@
 			<p>Here you can find all categories</p>
 			
 			<form class="form-inline add-form" th:action="@{/categories/save}" action="#" method="post" sec:authorize="hasAuthority('ADMIN')">
-				<input class="form-control mr-sm-2" type="text" id="name" placeholder="Name new company" th:field="${category.name}" />
+				<input class="form-control mr-sm-2" type="text" id="name" placeholder="Name new category" th:field="${category.name}" />
 				<button class="btn btn-success" type="submit" >Add</button>
 			</form>
 			

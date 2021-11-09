@@ -151,6 +151,11 @@ footer {
 	height: 10vh;
 }
 
+.clear-3 {
+	display: block;
+	height: 3vh;
+}
+
 .clear-width {
 	display: block;
 	width: 3vw;
