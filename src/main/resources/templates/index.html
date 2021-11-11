@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -25,32 +26,19 @@
 		<div class="flex-item main-container">
 			<div class="content">
 				<div class="text-box">
-					<h1>Welcome</h1>
+					<h1 th:text="#{welcome}"></h1>
 					<h2 sec:authorize="hasAnyAuthority('USER', 'ADMIN')">[[${#httpServletRequest.remoteUser}]]</h2>
-					<h5>to create virtual discgolf bag</h5>
+					<h5 th:text="#{greeting}"></h5>
 				</div>
 				<div class="clear"></div>
 				<div class="text-box">
-					<h5>Introduction</h5>
-					<p>This application was created as a school 
-					project to demonstrate the skills and learning 
-					implemented by the course. This application was
-					created using Java Spring boot creation and Rest 
-					service structure. Design was implemented with css 
-					and bootstrap.</p>
+					<h5 th:text="#{intro}"></h5>
+					<p th:text="#{introtext}"></p>
 					
 					<div class="clear"></div>
 					
-					<h6>How to use</h6>
-					<p>First off, users need to register to use this 
-					application. Users can create their own discgolf 
-					bags choosing discs from storage. Discs chosen 
-					from storage are shown in user's bag tab. Users 
-					can also find other users and checkout their 
-					bags. Empty discgolf bag is created when user 
-					signs up. From there users can go and fill that 
-					bag with the discs they want. Admins will implement
-					more discs to storage.</p>
+					<h6 th:text="#{howto}"></h6>
+					<p th:text="#{howtotext}"></p>
 					
 					<div class="clear"></div>
 				</div>
@@ -61,7 +49,17 @@
 		</div>
 	</div>
 	
-	
-	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
+	</script>
+	<script type="text/javascript">
+	$(document).ready(function() {
+	    $("#locales").change(function () {
+	        var selectedOption = $('#locales').val();
+	        if (selectedOption != ''){
+	            window.location.assign('?lang=' + selectedOption);
+	        }
+	    });
+	});
+	</script>
 </body>
 </html>

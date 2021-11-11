@@ -57,9 +57,9 @@ public class CategoryController {
 		return "redirect:/categories";
 	}
 	
-	@RequestMapping(value="/categories/save", method=RequestMethod.POST)
+	@RequestMapping(value="/save", method=RequestMethod.POST)
 	public String saveCategory(@ModelAttribute Category category) {
-		if(repository.findByName(category.capitalize(category.getName())).isEmpty()) {
+		if(!repository.findByName(category.capitalize(category.getName())).isEmpty()) {
 			return "redirect:/categories";
 		}
 		category.setName(category.capitalize(category.getName()));

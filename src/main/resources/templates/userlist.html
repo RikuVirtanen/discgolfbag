@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -10,7 +11,7 @@
 <link type="text/css" rel="stylesheet" href="/css/styles.css" th:href="@{/css/styles.css}" /> 
 <script src="https://kit.fontawesome.com/17a4ce7e95.js"></script>
 
-<title>Users</title>
+<title th:text="#{users}">Users</title>
 </head>
 <body>
 	<header>
@@ -23,21 +24,21 @@
 		</div>
 		<div class="flex-item table-container">
 			<div>
-				<h1>Users</h1>
-				<p>You can also find other users' bags and add discs into yours.</p>
+				<h1 th:text="#{users}">Users</h1>
+				<p th:text="#{users_text}">You can also find other users' bags and add discs into yours.</p>
 				<div class="add-btn" sec:authorize="hasAuthority('ADMIN')">
-					<a class="btn btn-success" th:href="@{/users/adduser}" >Add</a>
+					<a class="btn btn-success" th:href="@{/users/adduser}" th:text="#{add}">Add</a>
 				</div>
 				<form class="form-inline search-bar" action="#" th:action="@{/users}" method="get">
-					<input class="form-control mr-sm-2" type="search" placeholder="Search users" aria-label="Search" name="keyword" id="txtSearch"/>
+					<input class="form-control mr-sm-2" type="search" th:placeholder="#{search}" placeholder="Search users" aria-label="Search" name="keyword" id="txtSearch"/>
 					<button class="btn btn-outline-succes my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
 				</form>
 				<table class="table table-dark table-striped table-hover list">
 					<tr>
 						<th></th>
-						<th>USERNAME</th>
-						<th>EMAIL</th>
-						<th>ROLE</th>
+						<th th:text="#{username_list}">USERNAME</th>
+						<th th:text="#{email_list}">EMAIL</th>
+						<th th:text="#{role_list}">ROLE</th>
 						<th></th>
 						<th></th>
 						<th sec:authorize="hasAuthority('ADMIN')"></th>
@@ -49,16 +50,16 @@
 						<td th:text="${user.username}"></td>
 						<td th:text="${user.email}"></td>
 						<td th:text="${user.role}"></td>
-						<td><a class="btn btn-success" th:href="@{/users/bag/{id}(id=${user.id})}">bag</a><td>
+						<td><a class="btn btn-success" th:href="@{/users/bag/{id}(id=${user.id})}" th:text="#{bag}">Bag</a><td>
 						<td></td>
 						<td sec:authorize="hasAuthority('ADMIN')">
-							<a class="btn btn-success" th:href="@{/users/edit/{id}(id=${user.id})}" >Edit</a>
+							<a class="btn btn-success" th:href="@{/users/edit/{id}(id=${user.id})}" th:text="#{edit}">Edit</a>
 						</td>
 						<td sec:authorize="hasAuthority('ADMIN')">
 							<a 
 								class="btn btn-danger" 
 								th:href="@{/users/delete/{id}(id=${user.id})}" 
-								onclick="return confirm('Are you sure you wish to delete')" >
+								onclick="return confirm('Are you sure you wish to delete')" th:text="#{delete}">
 									Delete
 							</a>
 						</td>
@@ -70,5 +71,18 @@
 			<div class="side-container"></div>
 		</div>
 	</div>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
+	</script>
+	<script type="text/javascript">
+	$(document).ready(function() {
+	    $("#locales").change(function () {
+	        var selectedOption = $('#locales').val();
+	        if (selectedOption != ''){
+	            window.location.assign('?lang=' + selectedOption);
+	        }
+	    });
+	});
+	</script>
 </body>
 </html>

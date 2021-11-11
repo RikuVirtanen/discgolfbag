@@ -9,7 +9,7 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <link type="text/css" rel="stylesheet" href="/css/styles.css" th:href="@{/css/styles.css}" /> 
 <script src="https://kit.fontawesome.com/17a4ce7e95.js"></script>
-<title>Categories</title>
+<title th:text="#{categories}">Categories</title>
 </head>
 <body>
 	<header>
@@ -18,18 +18,18 @@
 	
 	<div class="container main-container">
 		<div>
-			<h1>Categories</h1>
-			<p>Here you can find all categories</p>
+			<h1 th:text="#{categories}">Categories</h1>
+			<p th:text="#{categories_text}">Here you can find all categories</p>
 			
 			<form class="form-inline add-form" th:action="@{/categories/save}" action="#" method="post" sec:authorize="hasAuthority('ADMIN')">
-				<input class="form-control mr-sm-2" type="text" id="name" placeholder="Name new category" th:field="${category.name}" />
-				<button class="btn btn-success" type="submit" >Add</button>
+				<input class="form-control col-8 mr-sm-2" type="text" id="name" th:placeholder="#{new_category}" placeholder="Name new category" th:field="${category.name}" />
+				<button class="btn btn-success" type="submit" th:text="#{add}">Add</button>
 			</form>
 			
 			<table class="table table-dark table-striped table-hover">
 				
 				<tr>
-					<th>NAME</th>
+					<th th:text="#{name}">NAME</th>
 					<th sec:authorize="hasAuthority('ADMIN')"></th>
 				</tr>	
 							
@@ -37,7 +37,7 @@
 
 					<th th:href="@{/categories/category/{id}(id=${c.id})}" th:text="${c.getCapitalizedName}"></th>
 					<td sec:authorize="hasAuthority('ADMIN')">
-						<a class="btn btn-danger" th:href="@{/categories/delete/{id}(id=${c.id})}" >Delete</a>
+						<a class="btn btn-danger" th:href="@{/categories/delete/{id}(id=${c.id})}" th:text="#{delete}">Delete</a>
 					</td>
 					
 				</tr>
@@ -47,5 +47,17 @@
 		</div>
 	</div>
 	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
+	</script>
+	<script type="text/javascript">
+	$(document).ready(function() {
+	    $("#locales").change(function () {
+	        var selectedOption = $('#locales').val();
+	        if (selectedOption != ''){
+	            window.location.assign('?lang=' + selectedOption);
+	        }
+	    });
+	});
+	</script>
 </body>
 </html>

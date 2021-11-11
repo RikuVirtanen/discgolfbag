@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -10,7 +11,7 @@
 <link type="text/css" rel="stylesheet" href="/css/styles.css" th:href="@{/css/styles.css}" /> 
 <script src="https://kit.fontawesome.com/17a4ce7e95.js"></script>
 
-<title th:text="${user.username} + '\'s profile'"></title>
+<title th:text="${user.username} + ' ' + #{profile}"></title>
 </head>
 <body>
 	<header>
@@ -21,12 +22,26 @@
 			<div class="side-container"></div>
 		</div>
 		<div class="flex-item table-container">
-			<h1 th:text="${user.username} + '\'s profile'"></h1>
+			<h1 th:text="${user.username} + ' ' + #{profile}"></h1>
+			
 			
 		</div>
 		<div class="flex-item">
 			<div class="side-container"></div>
 		</div>
 	</div>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
+	</script>
+	<script type="text/javascript">
+	$(document).ready(function() {
+	    $("#locales").change(function () {
+	        var selectedOption = $('#locales').val();
+	        if (selectedOption != ''){
+	            window.location.assign('?lang=' + selectedOption);
+	        }
+	    });
+	});
+	</script>
 </body>
 </html>

@@ -10,7 +10,7 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <link type="text/css" rel="stylesheet" href="/css/styles.css" th:href="@{/css/styles.css}" /> 
 <script src="https://kit.fontawesome.com/17a4ce7e95.js"></script>
-<title>Add new user</title>
+<title th:text="#{add} + ' ' + #{user}">Add user</title>
 </head>
 <body>
 	<header>
@@ -24,40 +24,40 @@
 		<div class="flex-item login-container">
 			<div class="content">
 				<div>
-					<h2>Add new user</h2>
+					<h2 th:text="#{add} + ' ' + #{user}">Add user</h2>
 				</div>
 				<form th:object="${signupform}" th:action="@{/users/createuser}" action="#" method="post">
 					<div>
-						<label for="username"> Username :</label>
-						<input id="username" type="text" th:field="*{username}" class="form-control" placeholder="Username" required />
-						<small class="input-helper">Usernames are set to lower case!</small>
+						<label for="username" th:text="#{username}"> Username :</label>
+						<input id="username" type="text" th:field="*{username}" class="form-control" th:placeholder="#{username}" placeholder="Username" required />
+						<small class="input-helper" th:text="#{username_helper}">Usernames are set to lower case!</small>
 						<p th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username Error</p>	
 					</div>
 					<div>
-						<label for="email"> Email :</label>
-						<input id="email" type="email" th:field="*{email}" class="form-control" placeholder="E-mail" required />
+						<label for="email" th:text="#{email}"> Email :</label>
+						<input id="email" type="email" th:field="*{email}" class="form-control" th:placeholder="#{email}" placeholder="E-mail" required />
 						<p th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</p>	
 					</div>
 					<div>
-						<label for="password"> Password :</label>
-						<input id="password" type="password" th:field="*{password}" class="form-control" placeholder="Password" required />
-						<small class="input-helper">Password must be 7 to 30 characters long!</small>
+						<label for="password" th:text="#{password}"> Password :</label>
+						<input id="password" type="password" th:field="*{password}" class="form-control" th:placeholder="#{password}" placeholder="Password" required />
+						<small class="input-helper" th:text="#{password_helper}">Password must be 7 to 30 characters long!</small>
 						<p th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</p>	
 					</div>
 					<div>
-						<label for="password-check"> Re-type Password: </label>
-						<input id="password-check" type="password" th:field="*{passwordCheck}" class="form-control" placeholder="Re-type password" required />
+						<label for="password-check" th:text="#{password_check}"> Re-type Password: </label>
+						<input id="password-check" type="password" th:field="*{passwordCheck}" class="form-control" th:placeholder="#{password_check}" placeholder="Re-type password" required />
 						<p th:if="${#fields.hasErrors('passwordCheck')}" th:errors="*{passwordCheck}">Password Match Error</p>	
 					</div>
 					<div>
-						<label for="role">Role</label>
-						<select id="role" th:field="*{role}" class="form-control" style="max-width: 100px">
+						<label for="role" th:text="#{role}">Role</label>
+						<select id="role" th:field="*{role}" class="form-control">
 							<option selected value="USER">USER</option>
 							<option value="ADMIN">ADMIN</option>
 						</select>
 					</div>
 					<div class="clear-3"></div>
-					<input type="submit" class="btn btn-primary mr-sm-2" value="Signup"></input>		
+					<input type="submit" class="btn btn-primary mr-sm-2" th:value="#{signup}" value="Signup"></input>		
 				</form>
 			</div>
 		</div>
@@ -65,5 +65,18 @@
 			<div class="side-container"></div>
 		</div>
 	</div>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
+	</script>
+	<script type="text/javascript">
+	$(document).ready(function() {
+	    $("#locales").change(function () {
+	        var selectedOption = $('#locales').val();
+	        if (selectedOption != ''){
+	            window.location.assign('?lang=' + selectedOption);
+	        }
+	    });
+	});
+	</script>
 </body>
 </html>

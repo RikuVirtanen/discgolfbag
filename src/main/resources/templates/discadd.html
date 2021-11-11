@@ -10,7 +10,7 @@
 <link type="text/css" rel="stylesheet" href="/css/styles.css" th:href="@{/css/styles.css}" /> 
 <script src="https://kit.fontawesome.com/17a4ce7e95.js"></script>
 
-<title>Add disc</title>
+<title th:text="#{add} + ' ' + #{disc}">Add disc</title>
 </head>
 <body>
 	<header>
@@ -23,21 +23,21 @@
 		</div>
 		<div class="flex-item main-container">
 			<div>
-				<h1>Add disc</h1>
+				<h1  th:text="#{add} + ' ' + #{disc}">Add disc</h1>
 				<form th:object="${disc}" th:action="@{/discs/save}" action="#" method="post">
 				
 					<div class="d-flex form-group">
 						<label hidden="hidden" for="id">Id</label>
 						<input class="form-control" type="hidden" id="id" th:field="${disc.id}" required />
 						<span>
-							<label for="name">Name</label>
-							<input class="form-control" type="text" id="name" placeholder="Name the disc" th:field="${disc.name}" style="max-width: 200px" required />
+							<label for="name" th:text="#{name}">Name</label>
+							<input class="form-control" type="text" id="name" th:placeholder="#{new_disc}" placeholder="Name the disc" th:field="${disc.name}" style="max-width: 200px" required />
 						</span>
 						<div class="clear-width"></div>
 						<span>
-							<label for="category">Type</label>
+							<label for="category" th:text="#{type}">Type</label>
 							<select class="form-control" id="category" th:field="*{category}" style="max-width: 200px" required >
-								<option value="" th:disabled selected >Choose the type</option>
+								<option value="" th:disabled selected th:text="#{choose_type}">Choose the type</option>
 								<option th:each="category: ${categories}" th:value="${category.id}" th:text="${category.getCapitalizedName}"></option>
 							</select>
 						</span>
@@ -45,17 +45,17 @@
 					<div class="d-flex form-group">	
 					
 						<span>
-							<label for="company">Company</label>
+							<label for="company" th:text="#{company}">Company</label>
 							<select class="form-control" id="company" th:field="*{company}" style="width: 200px" required onchange="showPlastics()">
-								<option value="" th:disabled selected >Choose the company</option>
+								<option value="" th:disabled selected th:text="#{choose_company}">Choose the company</option>
 								<option th:each="company: ${companies}" th:value="${company.id}" th:text="${company.getCapitalizedName}"></option>
 							</select>
 						</span>
 						<div class="clear-width"></div>
 						<span>
-							<label for="plastic">Plastic</label>
+							<label for="plastic" th:text="#{plastic}">Plastic</label>
 							<select class="form-control" id="plastic" th:field="*{plastic}" style="width: 200px" required >
-								<option value="" th:disabled selected >Choose the type</option>
+								<option value="" th:disabled selected th:text="#{choose_type}">Choose the type</option>
 								<option th:each="plastic: ${plastics}" th:value="${plastic.id}" th:text="${plastic.getCapitalizedName}"></option>
 							</select>
 						</span>
@@ -66,25 +66,25 @@
 					
 					<div class="d-flex form-group">
 						<span class="span">
-							<label for="speed">Speed</label>
+							<label for="speed" th:text="#{speed}">Speed</label>
 							<input class="form-control" type="number" id="speed" min="0" max="16" th:field="*{speed}" required />
 						</span>
 						<span class="span">
-							<label for="glide">Glide</label>
+							<label for="glide" th:text="#{glide}">Glide</label>
 							<input class="form-control" type="number" id="glide" min="0" max="6" th:field="*{glide}" required />
 						</span>
 						<span class="span">
-							<label for="turn">Turn</label>
+							<label for="turn" th:text="#{turn}">Turn</label>
 							<input class="form-control" type="number" id="turn" min="-5" max="4" th:field="*{turn}" required />
 						</span>
 						<span class="span">
-							<label for="fade">Fade</label>
+							<label for="fade" th:text="#{fade}">Fade</label>
 							<input class="form-control" type="number" id="fade" min="0" max="5" th:field="*{fade}" required />
 						</span>
 					</div>
 					<div class="form-group form-flex">
-						<button class="btn btn-secondary" type="submit">Save</button>
-						<button class="btn" type="reset">Reset</button>
+						<button class="btn btn-secondary" type="submit" th:text="#{save}">Save</button>
+						<button class="btn" type="reset" th:text="#{reset}">Reset</button>
 					</div>
 				</form>
 			</div>
@@ -93,6 +93,17 @@
 			<div class="side-container"></div>
 		</div>
 	</div>
-	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
+	</script>
+	<script type="text/javascript">
+	$(document).ready(function() {
+	    $("#locales").change(function () {
+	        var selectedOption = $('#locales').val();
+	        if (selectedOption != ''){
+	            window.location.assign('?lang=' + selectedOption);
+	        }
+	    });
+	});
+	</script>
 </body>
 </html>

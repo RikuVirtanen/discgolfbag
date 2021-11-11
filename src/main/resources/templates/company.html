@@ -22,22 +22,22 @@
 			<div class="side-container"></div>
 		</div>
 		
-		<div class="flex-item table-container">
+		<div class="flex-item table-container justify-content-space-around">
 			
 			<div>
 				<h1 th:text="${company.getCapitalizedName}"></h1>
-				<a class="btn btn-dark" href="/companies">Back</a>
+				<a class="btn btn-dark" href="/companies" th:text="#{back}">Back</a>
 			</div>
 			
 			<div style="display: flex; flex-direction: row; justify-content: space-around">
 				<div style="display: flex; flex-direction: column">
 					<form class="form-inline add-form" th:action="@{/companies/company/{id}/saveplastic(id=${company.id})}" action="#" method="post" sec:authorize="hasAuthority('ADMIN')">
-						<input class="form-control mr-sm-2" type="text" id="name" placeholder="Name new plastic" th:field="${plastic.name}" required/>
-						<button class="btn btn-success" type="submit" >Add</button>
+						<input class="form-control mr-sm-2" type="text" id="name" th:placeholder="#{new_plastic}" placeholder="Name new plastic" th:field="${plastic.name}" required/>
+						<button class="btn btn-success" type="submit" th:text="#{add}" ></button>
 					</form>
-					<table class="table table-dark table-striped table-hover" style="width: 20vw">
+					<table class="table table-dark table-striped table-hover" >
 						<tr>
-							<th>PLASTIC TYPES</th>
+							<th th:text="#{plastic_types}">PLASTIC TYPES</th>
 							<th sec:authorize="hasAuthority('ADMIN')"></th>
 							<th sec:authorize="hasAuthority('ADMIN')"></th>
 						</tr>
@@ -45,31 +45,32 @@
 							<td th:text="${p.getCapitalizedName}"></td>
 							<td sec:authorize="hasAuthority('ADMIN')">
 								<form class="form-inline add-form" th:action="@{/companies/company/{companyid}/saveplastic/{plasticid}(companyid=${company.id}, plasticid=${p.id})}" action="#" method="post" sec:authorize="hasAuthority('ADMIN')">
-									<input class="form-control mr-sm-2" type="text" id="name" placeholder="Change the name" th:field="${plastic.name}" required/>
-									<button class="btn btn-success" type="submit" >Save</button>
+									<input class="form-control mr-sm-2" type="text" id="name" th:placeholder="#{change_name}" placeholder="Change the name" th:field="${plastic.name}" required/>
+									<button class="btn btn-success" type="submit" th:text="#{save}"></button>
 								</form>
 							</td>
 							<td sec:authorize="hasAuthority('ADMIN')">
-								<a class="btn btn-warning" th:href="@{/companies/company/{companyid}/delete/{plasticid}(companyid=${company.id}, plasticid=${p.id})}">Delete</a>
+								<a class="btn btn-warning" th:href="@{/companies/company/{companyid}/delete/{plasticid}(companyid=${company.id}, plasticid=${p.id})}" th:text="#{delete}">Delete</a>
 							</td>
 						</tr>
 					</table>
 				</div>
+				<div class="flex-item clear-width"></div>
 				<div style="display: flex; flex-direction: column">
 					<div class="add-btn form-inline add-form" sec:authorize="hasAuthority('ADMIN')">
-						<a class="btn btn-success" th:href="@{/discs/storage/add/{id}(id=${company.id})}" >Add</a>
+						<a class="btn btn-success" th:href="@{/discs/storage/add/{id}(id=${company.id})}" th:text="#{add}" >Add</a>
 					</div>
 					<table class="table table-dark table-striped table-hover" style="width: 20vw">
 						<tr>
-							<th>Name</th>
-							<th>Plastic</th>
+							<th th:text="#{name}">Name</th>
+							<th th:text="#{plastic}">Plastic</th>
 							<th sec:authorize="hasAuthority('ADMIN')"></th>
 						</tr>
 						<tr th:each = "disc : ${company?.discs}">
 							<td th:text="${disc.getCapitalizedName}"></td>
 							<td th:text="${disc?.plastic?.getCapitalizedName}"></td>
 							<td sec:authorize="hasAuthority('ADMIN')">
-								<a class="btn btn-warning" th:href="@{/discs/storage/deletedisc/{id}(id=${disc.id})}">Delete</a>
+								<a class="btn btn-warning" th:href="@{/discs/storage/deletedisc/{id}(id=${disc.id})}" th:text="#{delete}">Delete</a>
 							</td>
 						</tr>
 					</table>
@@ -80,5 +81,18 @@
 			<div class="side-container"></div>
 		</div>
 	</div>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
+	</script>
+	<script type="text/javascript">
+	$(document).ready(function() {
+	    $("#locales").change(function () {
+	        var selectedOption = $('#locales').val();
+	        if (selectedOption != ''){
+	            window.location.assign('?lang=' + selectedOption);
+	        }
+	    });
+	});
+	</script>
 </body>
 </html>

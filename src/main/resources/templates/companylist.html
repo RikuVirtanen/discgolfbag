@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -9,7 +10,7 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <link type="text/css" rel="stylesheet" href="/css/styles.css" th:href="@{/css/styles.css}" /> 
 <script src="https://kit.fontawesome.com/17a4ce7e95.js"></script>
-<title>Companies</title>
+<title th:text="#{companies}">Companies</title>
 </head>
 <body>
 	<header>
@@ -18,23 +19,23 @@
 	
 	<div class="container main-container">
 		<div>
-			<h1>Companies</h1>
-			<p>Here you can find all companies.</p>
+			<h1 th:text="#{companies}">Companies</h1>
+			<p th:text="#{companies_text}">Here you can find all companies.</p>
 			
 			<form class="form-inline add-form" th:action="@{/companies/save}" action="#" method="post" sec:authorize="hasAuthority('ADMIN')">
-				<input class="form-control mr-sm-2" type="text" id="name" placeholder="Name new company" th:field="${company.name}" />
-				<button class="btn btn-success" type="submit" >Add</button>
+				<input class="form-control col-8 mr-sm-2" type="text" id="name" th:placeholder="#{new_company}" placeholder="Name new company" th:field="${company.name}" />
+				<button class="btn btn-success" type="submit" th:text="#{add}" >Add</button>
 			</form>
 			
 			<form class="form-inline search-bar" action="#" th:action="@{/companies}" method="GET">
-				<input class="form-control mr-sm-2" type="search" placeholder="Search companies" aria-label="Search" name="keyword" id="txtSearch" />
+				<input class="form-control mr-sm-2" type="search" th:placeholder="#{search}" placeholder="Search companies" aria-label="Search" name="keyword" id="txtSearch" />
 				<button class="btn btn-outline-succes my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
 			</form>
 			
 			<table class="table table-dark table-striped table-hover">
 				
 				<tr>
-					<th>NAME</th>
+					<th th:text="#{name}">NAME</th>
 					<th sec:authorize="hasAuthority('ADMIN')"></th>
 					<th sec:authorize="hasAuthority('ADMIN')"></th>
 				</tr>	
@@ -44,12 +45,12 @@
 					<th><a class="link-white" th:href="@{/companies/company/{id}(id=${c.id})}" th:text="${c.getCapitalizedName}"></a></th>
 					<td sec:authorize="hasAuthority('ADMIN')">
 						<form class="form-inline add-form" th:action="@{/companies/save/{id}(id=${c.id})}" action="#" method="post" sec:authorize="hasAuthority('ADMIN')">
-							<input class="form-control mr-sm-2" type="text" id="name" placeholder="Change the name" th:field="${company.name}" required/>
-							<button class="btn btn-success" type="submit" >Save</button>
+							<input class="form-control mr-sm-2" type="text" id="name" th:placeholder="#{change_name}" placeholder="Change the name" th:field="${company.name}" required/>
+							<button class="btn btn-success" type="submit" th:text="#{save}">Save</button>
 						</form>
 					</td>
 					<td sec:authorize="hasAuthority('ADMIN')">
-						<a class="btn btn-danger" th:href="@{/companies/delete/{id}(id=${c.id})}" >Delete</a>
+						<a class="btn btn-danger" th:href="@{/companies/delete/{id}(id=${c.id})}" th:text="#{delete}">Delete</a>
 					</td>
 					
 				</tr>
@@ -59,5 +60,17 @@
 		</div>
 	</div>
 	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
+	</script>
+	<script type="text/javascript">
+	$(document).ready(function() {
+	    $("#locales").change(function () {
+	        var selectedOption = $('#locales').val();
+	        if (selectedOption != ''){
+	            window.location.assign('?lang=' + selectedOption);
+	        }
+	    });
+	});
+	</script>
 </body>
 </html>

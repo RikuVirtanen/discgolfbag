@@ -22,15 +22,15 @@
 		</div>
 		
 		<div class="flex-item table-container">
-			<h1>Storage</h1>
+			<h1 th:text="#{storage}">Storage</h1>
 			<p>Here you can find all discs available.</p>
 			
 			<div class="add-btn" sec:authorize="hasAuthority('ADMIN')">
-				<a class="btn btn-success" th:href="@{/discs/storage/addnew}" >Add</a>
+				<a class="btn btn-success" th:href="@{/discs/add}" th:text="#{add}" ></a>
 			</div>
 			
 			<form class="form-inline form" action="#" th:action="@{/discs/storage}" method="GET">
-				<input class="form-control mr-sm-2" type="search" placeholder="Search discs" aria-label="Search" name="keyword" id="txtSearch" />
+				<input class="form-control mr-sm-2" type="search" th:placeholder="#{search}" placeholder="Search discs" aria-label="Search" name="keyword" id="txtSearch" />
 				<button class="btn btn-outline-succes my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
 			</form>
 			
@@ -38,19 +38,19 @@
 				
 				<tr>
 					<th></th>
-					<th>TYPE</th>
+					<th th:text="#{type}">TYPE</th>
 					<th></th>
-					<th>PLASTIC</th>
+					<th th:text="#{plastic}">PLASTIC</th>
 					<th></th>
-					<th>NAME</th>
+					<th th:text="#{name}">NAME</th>
 					<th></th>
-					<th>
+					<th th:text="#{attributes}">
 						ATTRIBUTES
-						<br>
+						<br/>
 						S | G | T | F
 					</th>
 					<th></th>
-					<th>COMPANY</th>
+					<th th:text="#{company}">COMPANY</th>
 					<th></th>
 					<th th:if="${bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')"></th>
 					<th sec:authorize="hasAuthority('ADMIN')"></th>
@@ -70,10 +70,10 @@
 					<td th:text="${disc?.company?.name}"></td>
 					<td></td>
 					<td th:if="${!bag.contains(disc)}" sec:authorize="hasAnyAuthority('USER', 'ADMIN')">
-						<a class="btn btn-success" th:href="@{/discs/storage/add/{id}(id=${disc.id})}" >Add</a>
+						<a class="btn btn-success" th:href="@{/discs/storage/add/{id}(id=${disc.id})}" th:text="#{add}" ></a>
 					</td>
 					<td sec:authorize="hasAuthority('ADMIN')">
-						<a class="btn btn-success" th:href="@{/discs/storage/editdisc/{id}(id=${disc.id})}" >Edit</a>
+						<a class="btn btn-success" th:href="@{/discs/storage/editdisc/{id}(id=${disc.id})}" th:text="#{edit}"></a>
 					</td>
 					<td sec:authorize="hasAuthority('ADMIN')">
 						<a 
@@ -94,5 +94,18 @@
 			<div class="side-container"></div>
 		</div>
 	</div>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
+	</script>
+	<script type="text/javascript">
+	$(document).ready(function() {
+	    $("#locales").change(function () {
+	        var selectedOption = $('#locales').val();
+	        if (selectedOption != ''){
+	            window.location.assign('?lang=' + selectedOption);
+	        }
+	    });
+	});
+	</script>
 </body>
 </html>
