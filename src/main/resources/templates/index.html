@@ -26,19 +26,32 @@
 		<div class="flex-item main-container">
 			<div class="content">
 				<div class="text-box">
-					<h1 th:text="#{welcome}"></h1>
+					<h1 th:text="#{welcome}">Welcome</h1>
 					<h2 sec:authorize="hasAnyAuthority('USER', 'ADMIN')">[[${#httpServletRequest.remoteUser}]]</h2>
-					<h5 th:text="#{greeting}"></h5>
+					<h5 th:text="#{greeting}">to create virtual discgolf bag</h5>
 				</div>
 				<div class="clear"></div>
 				<div class="text-box">
-					<h5 th:text="#{intro}"></h5>
-					<p th:text="#{introtext}"></p>
+					<h5 th:text="#{intro}">Introduction</h5>
+					<p th:text="#{introtext}">
+						This application was created as a school project to demonstrate the skills 
+						and learning implemented by the course. This application was created using 
+						Java Spring boot creation and Rest service structure. Design was implemented 
+						with css and bootstrap.
+					</p>
 					
 					<div class="clear"></div>
 					
-					<h6 th:text="#{howto}"></h6>
-					<p th:text="#{howtotext}"></p>
+					<h6 th:text="#{howto}">How to use</h6>
+					<p th:text="#{howtotext}">
+						First off, users need to register to use this application. 
+						Users can create their own discgolf bags choosing discs 
+						from storage. Discs chosen from storage are shown in user's 
+						bag tab. Users can also find other users and checkout their 
+						bags. Empty discgolf bag is created when user signs up. From 
+						there users can go and fill that bag with the discs they want. 
+						Admins will implement more discs to storage.
+					</p>
 					
 					<div class="clear"></div>
 				</div>
