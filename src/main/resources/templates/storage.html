@@ -26,7 +26,7 @@
 			<p th:text="#{storage_text}"></p>
 			<a class="btn btn-success" th:href="@{/discs/add}" sec:authorize="hasAuthority('ADMIN')" th:text="#{add}" ></a>
 			
-			<form class="form-inline search-bar" action="#" th:action="@{/discs/storage}" method="GET">
+			<form class="form-inline search-bar" action="#" th:action="@{/discs}" method="GET">
 				<input class="form-control mr-sm-2" type="search" th:placeholder="#{search}" placeholder="Search discs" aria-label="Search" name="keyword" id="txtSearch" />
 				<button class="btn btn-outline-succes my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
 			</form>
